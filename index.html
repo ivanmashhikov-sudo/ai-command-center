@@ -2,430 +2,897 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ivan · AI Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;500;700&family=Google+Sans+Mono&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0f1117;
-    --bg2: #1a1d27;
-    --bg3: #232636;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.15);
-    --text: #e8eaf0;
-    --text2: #8b90a8;
-    --text3: #4e5370;
-    --green: #22c55e;
-    --green-bg: rgba(34,197,94,0.1);
-    --blue: #60a5fa;
-    --blue-bg: rgba(96,165,250,0.1);
-    --amber: #fbbf24;
-    --amber-bg: rgba(251,191,36,0.1);
-    --purple: #a78bfa;
-    --purple-bg: rgba(167,139,250,0.1);
-    --red: #f87171;
-    --red-bg: rgba(248,113,113,0.1);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+/* ─── MD3 DESIGN TOKENS ─────────────────────────────────────────────────── */
+:root {
+  /* Seed color: #6750A4 (purple) → dark scheme */
+  --md-primary:           #D0BCFF;
+  --md-on-primary:        #381E72;
+  --md-primary-container:#4F378B;
+  --md-on-primary-container:#EADDFF;
+  --md-secondary:         #CCC2DC;
+  --md-on-secondary:      #332D41;
+  --md-secondary-container:#4A4458;
+  --md-on-secondary-container:#E8DEF8;
+  --md-tertiary:          #EFB8C8;
+  --md-on-tertiary:       #492532;
+  --md-tertiary-container:#633B48;
+  --md-on-tertiary-container:#FFD8E4;
+  --md-error:             #F2B8B5;
+  --md-on-error:          #601410;
+  --md-error-container:   #8C1D18;
+  --md-on-error-container:#F9DEDC;
+  --md-surface:           #141218;
+  --md-surface-dim:       #141218;
+  --md-surface-bright:    #3B383E;
+  --md-surface-container-lowest:#0F0D13;
+  --md-surface-container-low:   #1D1B20;
+  --md-surface-container:       #211F26;
+  --md-surface-container-high:  #2B2930;
+  --md-surface-container-highest:#36343B;
+  --md-on-surface:        #E6E1E5;
+  --md-on-surface-variant:#CAC4D0;
+  --md-outline:           #938F99;
+  --md-outline-variant:   #444746;
+  --md-inverse-surface:   #E6E1E5;
+  --md-inverse-on-surface:#322F35;
+  --md-inverse-primary:   #6750A4;
+  --md-scrim:             #000000;
+  /* State layers */
+  --md-state-hover:       rgba(208,188,255,.08);
+  --md-state-pressed:     rgba(208,188,255,.12);
+  --md-state-focus:       rgba(208,188,255,.12);
+  /* Elevation */
+  --md-elev1: 0 1px 2px rgba(0,0,0,.3),0 1px 3px 1px rgba(0,0,0,.15);
+  --md-elev2: 0 1px 2px rgba(0,0,0,.3),0 2px 6px 2px rgba(0,0,0,.15);
+  --md-elev3: 0 4px 8px 3px rgba(0,0,0,.15),0 1px 3px rgba(0,0,0,.3);
+  /* Shape */
+  --md-shape-xs:  4px;
+  --md-shape-s:   8px;
+  --md-shape-m:   12px;
+  --md-shape-l:   16px;
+  --md-shape-xl:  28px;
+  --md-shape-full:9999px;
+  /* Typography — Google Sans */
+  --md-display-l:   57px/64px 'Google Sans Display',sans-serif;
+  --md-headline-l:  32px/40px 'Google Sans Display',sans-serif;
+  --md-headline-m:  28px/36px 'Google Sans Display',sans-serif;
+  --md-title-l:     22px/28px 'Google Sans',sans-serif;
+  --md-title-m:     16px/24px 'Google Sans',sans-serif;
+  --md-title-s:     14px/20px 'Google Sans',sans-serif;
+  --md-body-l:      16px/24px 'Google Sans',sans-serif;
+  --md-body-m:      14px/20px 'Google Sans',sans-serif;
+  --md-body-s:      12px/16px 'Google Sans',sans-serif;
+  --md-label-l:     14px/20px 'Google Sans',sans-serif;
+  --md-label-m:     12px/16px 'Google Sans',sans-serif;
+  --md-label-s:     11px/16px 'Google Sans',sans-serif;
+  /* Motion — M3 Expressive spring */
+  --md-motion-standard:      cubic-bezier(.2,0,0,1);
+  --md-motion-emphasized:    cubic-bezier(.2,0,0,1);
+  --md-motion-decelerate:    cubic-bezier(0,0,0,1);
+  --md-motion-short2:        200ms;
+  --md-motion-medium2:       300ms;
+  --md-motion-long2:         500ms;
+}
+/* ─── RESET & BASE ──────────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+body{font:var(--md-body-m);background:var(--md-surface);color:var(--md-on-surface);height:100vh;display:flex;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea,select{font-family:inherit}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--md-outline);border-radius:var(--md-shape-full)}
 
-  /* ── TOP BAR ── */
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-bottom: 1px solid var(--border); background: var(--bg2); position: sticky; top: 0; z-index: 100; }
-  .topbar-left { display: flex; align-items: center; gap: 12px; }
-  .logo { width: 32px; height: 32px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .topbar-title { font-size: 15px; font-weight: 600; }
-  .topbar-sub { font-size: 11px; color: var(--text2); }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
-  .topbar-right { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text2); }
-  .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+/* ─── NAVIGATION RAIL ───────────────────────────────────────────────────── */
+.nav-rail{
+  width:80px;
+  background:var(--md-surface-container-low);
+  display:flex;flex-direction:column;align-items:center;
+  padding:16px 0;gap:4px;flex-shrink:0;
+  border-right:1px solid rgba(255,255,255,.05);
+}
+.nav-rail-logo{
+  width:48px;height:48px;border-radius:var(--md-shape-l);
+  background:var(--md-primary-container);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-bottom:16px;
+  box-shadow:var(--md-elev1);
+}
+.nav-item{
+  width:56px;border-radius:var(--md-shape-full);
+  display:flex;flex-direction:column;align-items:center;
+  padding:12px 0 4px;gap:4px;cursor:pointer;
+  transition:background var(--md-motion-short2) var(--md-motion-standard);
+  position:relative;
+}
+.nav-item::before{
+  content:'';position:absolute;inset:0;border-radius:var(--md-shape-full);
+  background:transparent;
+  transition:background var(--md-motion-short2) var(--md-motion-standard);
+}
+.nav-item:hover::before{background:var(--md-state-hover)}
+.nav-item-indicator{
+  width:56px;height:32px;border-radius:var(--md-shape-full);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;position:relative;z-index:1;
+  transition:background var(--md-motion-medium2) var(--md-motion-emphasized),
+             width var(--md-motion-medium2) var(--md-motion-emphasized);
+}
+.nav-item.active .nav-item-indicator{
+  background:var(--md-secondary-container);
+  width:64px;
+}
+.nav-item-label{
+  font:var(--md-label-m);font-weight:500;
+  color:var(--md-on-surface-variant);
+  position:relative;z-index:1;
+  transition:color var(--md-motion-short2);
+}
+.nav-item.active .nav-item-label{color:var(--md-on-secondary-container)}
+.nav-rail-divider{width:32px;height:1px;background:var(--md-outline-variant);margin:8px 0}
+.nav-rail-badge{
+  position:absolute;top:8px;right:6px;
+  min-width:16px;height:16px;border-radius:var(--md-shape-full);
+  background:var(--md-error);color:var(--md-on-error);
+  font:var(--md-label-s);font-weight:700;
+  display:flex;align-items:center;justify-content:center;padding:0 4px;
+  z-index:2;
+}
 
-  /* ── LAYOUT ── */
-  .layout { display: grid; grid-template-columns: 220px 1fr 280px; height: calc(100vh - 57px); }
+/* ─── MAIN LAYOUT ───────────────────────────────────────────────────────── */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
-  /* ── SIDEBAR ── */
-  .sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 16px 0; overflow-y: auto; }
-  .nav-section { margin-bottom: 20px; }
-  .nav-label { font-size: 10px; font-weight: 600; color: var(--text3); padding: 0 16px; margin-bottom: 6px; letter-spacing: .08em; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all .15s; border-left: 2px solid transparent; }
-  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-  .nav-item.active { color: var(--blue); background: var(--blue-bg); border-left-color: var(--blue); }
-  .nav-icon { width: 18px; text-align: center; font-size: 14px; }
-  .nav-count { margin-left: auto; font-size: 10px; padding: 1px 6px; border-radius: 8px; background: rgba(255,255,255,0.08); }
+/* ─── TOP APP BAR ───────────────────────────────────────────────────────── */
+.top-bar{
+  height:64px;background:var(--md-surface-container);
+  display:flex;align-items:center;padding:0 24px;gap:16px;
+  border-bottom:1px solid var(--md-outline-variant);
+  flex-shrink:0;
+}
+.top-bar-headline{font:var(--md-title-l);font-weight:500;flex:1}
+.top-bar-chip{
+  height:32px;border-radius:var(--md-shape-full);
+  border:1px solid var(--md-outline);
+  padding:0 12px;display:flex;align-items:center;gap:6px;
+  font:var(--md-label-l);color:var(--md-on-surface-variant);
+}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#4CAF50;animation:pulse-md 2s infinite}
+@keyframes pulse-md{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
 
-  .agent-card { margin: 8px 12px; background: var(--bg3); border-radius: 8px; padding: 10px 12px; border: 1px solid var(--border); }
-  .agent-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-  .agent-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .agent-name { font-size: 12px; color: var(--text); flex: 1; }
-  .agent-st { font-size: 10px; }
+/* ─── CONTENT ───────────────────────────────────────────────────────────── */
+.content{flex:1;overflow-y:auto;padding:24px}
+.view{display:none;animation:fade-in var(--md-motion-short2) var(--md-motion-decelerate)}
+.view.active{display:block}
+@keyframes fade-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-  /* ── MAIN ── */
-  .main { overflow-y: auto; padding: 20px 24px; }
-  .greeting { margin-bottom: 20px; }
-  .greeting h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
-  .greeting p { font-size: 13px; color: var(--text2); }
+/* ─── MD3 CARDS ─────────────────────────────────────────────────────────── */
+.card{
+  background:var(--md-surface-container);
+  border-radius:var(--md-shape-l);
+  overflow:hidden;
+  transition:box-shadow var(--md-motion-short2) var(--md-motion-standard);
+}
+.card-elevated{
+  background:color-mix(in srgb,var(--md-surface-container) 95%,var(--md-primary) 5%);
+  box-shadow:var(--md-elev1);
+}
+.card-elevated:hover{box-shadow:var(--md-elev2)}
+.card-filled{background:var(--md-surface-container-highest)}
+.card-outlined{background:var(--md-surface);border:1px solid var(--md-outline-variant)}
 
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
-  .stat-num { font-size: 24px; font-weight: 600; margin-bottom: 2px; }
-  .stat-label { font-size: 11px; color: var(--text2); }
-  .stat-trend { font-size: 10px; margin-top: 4px; }
+/* ─── METRIC CARDS ──────────────────────────────────────────────────────── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.metric-card{
+  background:var(--md-surface-container-high);
+  border-radius:var(--md-shape-l);padding:20px;
+  position:relative;overflow:hidden;
+}
+.metric-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(208,188,255,.05) 0%,transparent 60%);
+}
+.metric-val{font:var(--md-headline-m);font-weight:500;line-height:1}
+.metric-lbl{font:var(--md-body-s);color:var(--md-on-surface-variant);margin-top:6px}
+.metric-trend{font:var(--md-label-s);margin-top:8px;display:flex;align-items:center;gap:4px}
 
-  .section-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* ─── SECTION HEADING ───────────────────────────────────────────────────── */
+.sec-head{
+  font:var(--md-title-s);font-weight:500;
+  color:var(--md-on-surface-variant);
+  margin:24px 0 12px;
+  display:flex;align-items:center;gap:8px;
+}
+.sec-head::after{content:'';flex:1;height:1px;background:var(--md-outline-variant)}
 
-  .tasks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-  .task { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; transition: border-color .15s; cursor: pointer; }
-  .task:hover { border-color: var(--border2); }
-  .task-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
-  .task-body { flex: 1; }
-  .task-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
-  .task-meta { font-size: 11px; color: var(--text2); }
-  .task-badge { font-size: 10px; padding: 3px 8px; border-radius: 8px; font-weight: 500; white-space: nowrap; }
-  .task-progress-wrap { margin-top: 6px; }
-  .task-progress-bar { height: 3px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
-  .task-progress-fill { height: 100%; border-radius: 2px; transition: width .8s; }
+/* ─── MD3 TASK LIST ─────────────────────────────────────────────────────── */
+.task-list{display:flex;flex-direction:column;gap:8px}
+.task-item{
+  background:var(--md-surface-container);
+  border-radius:var(--md-shape-m);
+  padding:16px;display:flex;align-items:center;gap:16px;
+  transition:background var(--md-motion-short2) var(--md-motion-standard),
+             box-shadow var(--md-motion-short2) var(--md-motion-standard);
+  cursor:pointer;position:relative;overflow:hidden;
+}
+.task-item::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:transparent;
+  transition:background var(--md-motion-short2);
+  pointer-events:none;
+}
+.task-item:hover::before{background:var(--md-state-hover)}
+.task-item.done{opacity:.6}
+.task-item.done .task-item-title{text-decoration:line-through;color:var(--md-on-surface-variant)}
 
-  .phase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-  .phase-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
-  .phase-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .phase-num { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
-  .phase-title { font-size: 12px; font-weight: 600; flex: 1; }
-  .phase-pct { font-size: 12px; font-weight: 600; }
-  .phase-bar { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
-  .phase-fill { height: 100%; border-radius: 2px; }
-  .phase-items { font-size: 11px; color: var(--text2); }
+/* MD3 Checkbox */
+.md-checkbox{
+  width:18px;height:18px;border-radius:2px;
+  border:2px solid var(--md-outline);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all var(--md-motion-short2) var(--md-motion-emphasized);
+  cursor:pointer;
+}
+.md-checkbox.checked{background:var(--md-primary);border-color:var(--md-primary)}
+.md-checkbox.checked::after{content:'✓';font-size:11px;color:var(--md-on-primary);font-weight:700}
 
-  /* ── LOG PANEL ── */
-  .log-panel { background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-  .log-top { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .log-top h3 { font-size: 13px; font-weight: 600; }
-  .log-scroll { flex: 1; overflow-y: auto; padding: 12px; }
-  .log-entry { display: flex; gap: 8px; margin-bottom: 14px; align-items: flex-start; }
-  .log-time { font-size: 10px; color: var(--text3); min-width: 38px; padding-top: 2px; }
-  .log-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-  .log-text { font-size: 12px; color: var(--text2); line-height: 1.45; }
-  .log-text b { color: var(--text); }
-  .log-divider { height: 1px; background: var(--border); margin: 10px 0; }
+.task-item-icon{
+  width:40px;height:40px;border-radius:var(--md-shape-m);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+.task-item-body{flex:1;min-width:0}
+.task-item-title{font:var(--md-body-m);font-weight:500;margin-bottom:2px}
+.task-item-sub{font:var(--md-body-s);color:var(--md-on-surface-variant)}
+.task-item-progress{height:2px;background:var(--md-outline-variant);border-radius:1px;margin-top:8px;overflow:hidden}
+.task-item-fill{height:100%;border-radius:1px;transition:width .6s var(--md-motion-emphasized)}
+.task-item-end{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
 
-  .cmd-area { padding: 12px; border-top: 1px solid var(--border); }
-  .cmd-row { display: flex; gap: 8px; }
-  .cmd-input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--text); outline: none; transition: border-color .15s; }
-  .cmd-input:focus { border-color: var(--blue); }
-  .cmd-input::placeholder { color: var(--text3); }
-  .cmd-btn { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); border-radius: 8px; padding: 8px 12px; color: var(--blue); font-size: 12px; cursor: pointer; font-weight: 500; transition: background .15s; }
-  .cmd-btn:hover { background: rgba(96,165,250,0.2); }
+/* MD3 Chips */
+.chip{
+  height:32px;border-radius:var(--md-shape-full);
+  padding:0 12px;display:inline-flex;align-items:center;gap:6px;
+  font:var(--md-label-l);border:1px solid var(--md-outline);
+  color:var(--md-on-surface-variant);cursor:pointer;
+  transition:background var(--md-motion-short2),border-color var(--md-motion-short2);
+}
+.chip:hover{background:var(--md-state-hover)}
+.chip.selected{background:var(--md-secondary-container);border-color:transparent;color:var(--md-on-secondary-container)}
+.chip-icon{font-size:14px}
 
-  .scroll-hide::-webkit-scrollbar { width: 4px; }
-  .scroll-hide::-webkit-scrollbar-track { background: transparent; }
-  .scroll-hide::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+/* MD3 Assist / Filled chips */
+.chip-assist{background:var(--md-surface-container-high);border-color:transparent}
+
+/* ─── MD3 TEXT FIELD ─────────────────────────────────────────────────────── */
+.field{position:relative;margin-bottom:4px}
+.field-input{
+  width:100%;height:56px;
+  background:var(--md-surface-container-highest);
+  border:none;border-radius:var(--md-shape-xs) var(--md-shape-xs) 0 0;
+  border-bottom:1px solid var(--md-outline);
+  padding:24px 16px 8px;
+  font:var(--md-body-l);color:var(--md-on-surface);outline:none;
+  transition:border-color var(--md-motion-short2);
+}
+.field-input:focus{border-bottom:2px solid var(--md-primary)}
+.field-label{
+  position:absolute;left:16px;top:50%;transform:translateY(-50%);
+  font:var(--md-body-l);color:var(--md-on-surface-variant);
+  pointer-events:none;
+  transition:all var(--md-motion-short2) var(--md-motion-standard);
+}
+.field-input:focus~.field-label,
+.field-input:not(:placeholder-shown)~.field-label{
+  top:8px;transform:none;
+  font:var(--md-body-s);color:var(--md-primary);
+}
+.field-input::placeholder{color:transparent}
+
+.field-textarea{
+  width:100%;
+  background:var(--md-surface-container-highest);
+  border:none;border-radius:var(--md-shape-xs) var(--md-shape-xs) 0 0;
+  border-bottom:1px solid var(--md-outline);
+  padding:16px;
+  font:var(--md-body-m);color:var(--md-on-surface);outline:none;
+  resize:vertical;min-height:120px;
+  transition:border-color var(--md-motion-short2);
+}
+.field-textarea:focus{border-bottom:2px solid var(--md-primary)}
+
+/* ─── MD3 BUTTONS ────────────────────────────────────────────────────────── */
+.btn-filled{
+  height:40px;border-radius:var(--md-shape-full);
+  background:var(--md-primary);color:var(--md-on-primary);
+  padding:0 24px;font:var(--md-label-l);font-weight:500;
+  transition:box-shadow var(--md-motion-short2);
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-filled:hover{box-shadow:var(--md-elev2)}
+.btn-tonal{
+  height:40px;border-radius:var(--md-shape-full);
+  background:var(--md-secondary-container);color:var(--md-on-secondary-container);
+  padding:0 24px;font:var(--md-label-l);font-weight:500;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:box-shadow var(--md-motion-short2);
+}
+.btn-tonal:hover{box-shadow:var(--md-elev1)}
+.btn-outlined{
+  height:40px;border-radius:var(--md-shape-full);
+  background:transparent;color:var(--md-primary);
+  border:1px solid var(--md-outline);
+  padding:0 24px;font:var(--md-label-l);font-weight:500;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-text{
+  height:40px;border-radius:var(--md-shape-full);
+  background:transparent;color:var(--md-primary);
+  padding:0 12px;font:var(--md-label-l);font-weight:500;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn-text:hover{background:var(--md-state-hover)}
+
+/* FAB */
+.fab{
+  width:56px;height:56px;border-radius:var(--md-shape-l);
+  background:var(--md-primary-container);color:var(--md-on-primary-container);
+  box-shadow:var(--md-elev3);
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  cursor:pointer;
+  transition:box-shadow var(--md-motion-short2),transform var(--md-motion-short2);
+}
+.fab:hover{box-shadow:0 6px 10px 4px rgba(0,0,0,.15),0 2px 3px rgba(0,0,0,.3);transform:scale(1.02)}
+.fab:active{transform:scale(.97)}
+.fab-extended{
+  height:56px;border-radius:var(--md-shape-l);
+  background:var(--md-primary-container);color:var(--md-on-primary-container);
+  box-shadow:var(--md-elev3);
+  padding:0 20px 0 16px;gap:12px;
+  display:inline-flex;align-items:center;
+  font:var(--md-label-l);font-size:14px;font-weight:500;
+  cursor:pointer;
+  transition:box-shadow var(--md-motion-short2);
+}
+.fab-extended:hover{box-shadow:0 6px 10px 4px rgba(0,0,0,.15),0 2px 3px rgba(0,0,0,.3)}
+
+/* ─── PHASE PROGRESS ─────────────────────────────────────────────────────── */
+.phase-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.phase-card{
+  background:var(--md-surface-container);
+  border-radius:var(--md-shape-l);padding:20px;
+}
+.phase-card-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.phase-num{
+  width:32px;height:32px;border-radius:var(--md-shape-s);
+  display:flex;align-items:center;justify-content:center;
+  font:var(--md-label-l);font-weight:700;flex-shrink:0;
+}
+.phase-name{font:var(--md-title-s);font-weight:500;flex:1}
+.phase-pct{font:var(--md-label-l);font-weight:500}
+.phase-track{height:4px;background:var(--md-outline-variant);border-radius:2px;overflow:hidden}
+.phase-indicator{height:100%;border-radius:2px;transition:width .8s var(--md-motion-emphasized)}
+.phase-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.phase-chip{
+  height:24px;border-radius:var(--md-shape-full);
+  padding:0 10px;font:var(--md-label-s);
+  display:inline-flex;align-items:center;
+}
+
+/* ─── AGENT CARDS ────────────────────────────────────────────────────────── */
+.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.agent-card{
+  background:var(--md-surface-container);
+  border-radius:var(--md-shape-l);padding:20px;
+}
+.agent-card-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.agent-avatar{
+  width:48px;height:48px;border-radius:var(--md-shape-l);
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.agent-card-name{font:var(--md-title-s);font-weight:500}
+.agent-card-status{font:var(--md-body-s);margin-top:2px}
+.agent-card-desc{font:var(--md-body-s);color:var(--md-on-surface-variant);line-height:1.6;margin-bottom:12px}
+.agent-card-tools{display:flex;flex-wrap:wrap;gap:6px}
+.tool-chip{
+  height:24px;padding:0 8px;border-radius:var(--md-shape-full);
+  background:var(--md-surface-container-highest);
+  font:var(--md-label-s);color:var(--md-on-surface-variant);
+  display:inline-flex;align-items:center;
+}
+
+/* ─── MEMORY CARDS ───────────────────────────────────────────────────────── */
+.mem-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mem-card{background:var(--md-surface-container);border-radius:var(--md-shape-l);overflow:hidden}
+.mem-card-head{
+  padding:16px 20px;border-bottom:1px solid var(--md-outline-variant);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.mem-card-title{font:var(--md-title-s);font-weight:500}
+.mem-body{padding:4px}
+
+/* ─── AUTOMATION ─────────────────────────────────────────────────────────── */
+.auto-list{display:flex;flex-direction:column;gap:8px}
+.auto-item{
+  background:var(--md-surface-container);
+  border-radius:var(--md-shape-m);
+  padding:16px 20px;
+  display:flex;align-items:center;gap:16px;
+}
+.auto-icon{font-size:20px;flex-shrink:0}
+.auto-body{flex:1}
+.auto-name{font:var(--md-body-m);font-weight:500;margin-bottom:2px}
+.auto-desc{font:var(--md-body-s);color:var(--md-on-surface-variant)}
+/* MD3 Switch */
+.md-switch{
+  width:52px;height:32px;border-radius:var(--md-shape-full);
+  background:var(--md-surface-container-highest);
+  border:2px solid var(--md-outline);
+  cursor:pointer;position:relative;flex-shrink:0;
+  transition:background var(--md-motion-short2) var(--md-motion-standard),
+             border-color var(--md-motion-short2);
+}
+.md-switch::after{
+  content:'';position:absolute;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--md-outline);
+  top:6px;left:6px;
+  transition:all var(--md-motion-medium2) var(--md-motion-emphasized);
+}
+.md-switch.on{background:var(--md-primary);border-color:var(--md-primary)}
+.md-switch.on::after{background:var(--md-on-primary);width:24px;height:24px;top:2px;left:22px}
+
+/* ─── LOG ────────────────────────────────────────────────────────────────── */
+.log-surface{
+  background:var(--md-surface-container);
+  border-radius:var(--md-shape-l);overflow:hidden;
+}
+.log-head{
+  padding:16px 20px;border-bottom:1px solid var(--md-outline-variant);
+  display:flex;align-items:center;gap:10px;
+  font:var(--md-title-s);font-weight:500;
+}
+.log-body{padding:16px;max-height:320px;overflow-y:auto}
+.log-row{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+.log-time{font:var(--md-label-s);color:var(--md-outline);min-width:44px;padding-top:2px;font-family:'Google Sans Mono',monospace}
+.log-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.log-text{font:var(--md-body-s);color:var(--md-on-surface-variant);line-height:1.5}
+.log-text b{color:var(--md-on-surface);font-weight:500}
+.log-cmd{
+  padding:12px 20px;border-top:1px solid var(--md-outline-variant);
+  display:flex;gap:12px;align-items:center;
+}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="logo">🤖</div>
-    <div>
-      <div class="topbar-title">AI Command Center</div>
-      <div class="topbar-sub">Иван · Личное пространство</div>
-    </div>
+<!-- NAVIGATION RAIL -->
+<nav class="nav-rail">
+  <div class="nav-rail-logo">🤖</div>
+
+  <div class="nav-item active" onclick="show('dash',this)" title="Дашборд">
+    <div class="nav-item-indicator">⚡</div>
+    <span class="nav-item-label">Обзор</span>
   </div>
-  <div class="topbar-right">
-    <div class="status-dot"></div>
-    <span style="color:var(--green);font-size:12px">Агенты онлайн</span>
-    <span class="badge" style="background:var(--purple-bg);color:var(--purple)" id="clock"></span>
+  <div class="nav-item" onclick="show('tasks',this)" title="Задачи">
+    <div class="nav-item-indicator">📋</div>
+    <span class="nav-item-label">Задачи</span>
+    <div class="nav-rail-badge" id="nb-tasks">0</div>
   </div>
-</div>
-
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar scroll-hide">
-    <div class="nav-section">
-      <div class="nav-label">Навигация</div>
-      <div class="nav-item active"><span class="nav-icon">⚡</span>Дашборд</div>
-      <div class="nav-item"><span class="nav-icon">📋</span>Задачи<span class="nav-count" id="task-count">4</span></div>
-      <div class="nav-item"><span class="nav-icon">🧠</span>Память</div>
-      <div class="nav-item"><span class="nav-icon">🔌</span>Агенты</div>
-      <div class="nav-item"><span class="nav-icon">⚙️</span>Автоматизация</div>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-label">Агенты</div>
-      <div class="agent-card">
-        <div class="agent-row">
-          <div class="agent-dot" style="background:var(--green)"></div>
-          <span class="agent-name">Gmail</span>
-          <span class="agent-st" style="color:var(--green)">●</span>
-        </div>
-        <div class="agent-row">
-          <div class="agent-dot" style="background:var(--green)"></div>
-          <span class="agent-name">Google Calendar</span>
-          <span class="agent-st" style="color:var(--green)">●</span>
-        </div>
-        <div class="agent-row">
-          <div class="agent-dot" style="background:var(--green)"></div>
-          <span class="agent-name">Google Drive</span>
-          <span class="agent-st" style="color:var(--green)">●</span>
-        </div>
-        <div class="agent-row">
-          <div class="agent-dot" style="background:var(--amber)"></div>
-          <span class="agent-name">Браузер</span>
-          <span class="agent-st" style="color:var(--amber)">◐</span>
-        </div>
-        <div class="agent-row">
-          <div class="agent-dot" style="background:var(--amber)"></div>
-          <span class="agent-name">Память</span>
-          <span class="agent-st" style="color:var(--amber)">◐</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-label">Ожидают</div>
-      <div class="agent-card">
-        <div class="agent-row">
-          <div class="agent-dot" style="background:var(--text3)"></div>
-          <span class="agent-name" style="color:var(--text2)">Slack</span>
-        </div>
-        <div class="agent-row">
-          <div class="agent-dot" style="background:var(--text3)"></div>
-          <span class="agent-name" style="color:var(--text2)">GitHub</span>
-        </div>
-        <div class="agent-row">
-          <div class="agent-dot" style="background:var(--text3)"></div>
-          <span class="agent-name" style="color:var(--text2)">n8n</span>
-        </div>
-        <div class="agent-row">
-          <div class="agent-dot" style="background:var(--text3)"></div>
-          <span class="agent-name" style="color:var(--text2)">Telegram</span>
-        </div>
-      </div>
-    </div>
+  <div class="nav-item" onclick="show('agents',this)" title="Агенты">
+    <div class="nav-item-indicator">🤖</div>
+    <span class="nav-item-label">Агенты</span>
   </div>
+  <div class="nav-item" onclick="show('memory',this)" title="Память">
+    <div class="nav-item-indicator">🧠</div>
+    <span class="nav-item-label">Память</span>
+  </div>
+  <div class="nav-item" onclick="show('auto',this)" title="Автоматизация">
+    <div class="nav-item-indicator">⚙️</div>
+    <span class="nav-item-label">Авто</span>
+  </div>
+  <div class="nav-item" onclick="show('log',this)" title="Лог">
+    <div class="nav-item-indicator">📡</div>
+    <span class="nav-item-label">Лог</span>
+  </div>
+</nav>
 
-  <!-- MAIN -->
-  <div class="main scroll-hide">
-    <div class="greeting">
-      <h1>Привет, Иван 👋</h1>
-      <p id="greeting-sub">Загрузка данных...</p>
-    </div>
+<!-- MAIN AREA -->
+<div class="main-area">
 
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-num" style="color:var(--green)" id="s1">3</div>
-        <div class="stat-label">агентов онлайн</div>
-        <div class="stat-trend" style="color:var(--green)">↑ +2 к следующей неделе</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num" style="color:var(--blue)" id="s2">4</div>
-        <div class="stat-label">активных задачи</div>
-        <div class="stat-trend" style="color:var(--blue)">● в прогрессе</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num" style="color:var(--purple)" id="s3">11</div>
-        <div class="stat-label">плагинов готово</div>
-        <div class="stat-trend" style="color:var(--purple)">Anthropic knowledge-work</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num" style="color:var(--amber)" id="s4">35%</div>
-        <div class="stat-label">покрытие системы</div>
-        <div class="stat-trend" style="color:var(--amber)">→ цель 100%</div>
-      </div>
-    </div>
+  <!-- TOP APP BAR -->
+  <header class="top-bar">
+    <span class="top-bar-headline" id="top-title">Обзор</span>
+    <div class="top-bar-chip"><div class="live-dot"></div>Агенты онлайн</div>
+    <div class="top-bar-chip" id="clock-chip">00:00</div>
+  </header>
 
-    <div class="section-title">Активные задачи</div>
-    <div class="tasks">
-      <div class="task">
-        <div class="task-icon" style="background:var(--amber-bg)">🧠</div>
-        <div class="task-body">
-          <div class="task-name">Установка claude-mem</div>
-          <div class="task-meta">Постоянная память агента между сессиями</div>
-          <div class="task-progress-wrap">
-            <div class="task-progress-bar"><div class="task-progress-fill" style="width:60%;background:var(--amber)"></div></div>
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="view active" id="view-dash">
+      <div style="margin-bottom:8px">
+        <div style="font:var(--md-headline-m);font-weight:500" id="greeting">Привет, Иван 👋</div>
+        <div style="font:var(--md-body-m);color:var(--md-on-surface-variant);margin-top:4px" id="greeting-sub"></div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric-card">
+          <div class="metric-val" style="color:var(--md-primary)">3</div>
+          <div class="metric-lbl">агентов онлайн</div>
+          <div class="metric-trend" style="color:#4CAF50">▲ +2 к неделе</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color:var(--md-tertiary)" id="ds-active">0</div>
+          <div class="metric-lbl">активных задач</div>
+          <div class="metric-trend" style="color:var(--md-on-surface-variant)">● в прогрессе</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color:var(--md-secondary)">11</div>
+          <div class="metric-lbl">плагинов готово</div>
+          <div class="metric-trend" style="color:var(--md-on-surface-variant)">Anthropic</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color:#4CAF50" id="ds-done">0</div>
+          <div class="metric-lbl">выполнено</div>
+          <div class="metric-trend" style="color:var(--md-on-surface-variant)">сегодня</div>
+        </div>
+      </div>
+
+      <div class="sec-head">Прогресс системы</div>
+      <div class="phase-grid">
+        <div class="phase-card">
+          <div class="phase-card-head">
+            <div class="phase-num" style="background:var(--md-tertiary-container);color:var(--md-on-tertiary-container)">1</div>
+            <span class="phase-name">Память и знания</span>
+            <span class="phase-pct" style="color:var(--md-tertiary)">65%</span>
+          </div>
+          <div class="phase-track"><div class="phase-indicator" style="width:65%;background:var(--md-tertiary)"></div></div>
+          <div class="phase-chips">
+            <span class="phase-chip" style="background:var(--md-tertiary-container);color:var(--md-on-tertiary-container)">claude-mem</span>
+            <span class="phase-chip" style="background:var(--md-surface-container-high);color:var(--md-on-surface-variant)">anytype</span>
           </div>
         </div>
-        <span class="task-badge" style="background:var(--amber-bg);color:var(--amber)">60%</span>
-      </div>
-      <div class="task">
-        <div class="task-icon" style="background:var(--purple-bg)">🔌</div>
-        <div class="task-body">
-          <div class="task-name">knowledge-work-plugins</div>
-          <div class="task-meta">11 официальных плагинов Anthropic</div>
-          <div class="task-progress-wrap">
-            <div class="task-progress-bar"><div class="task-progress-fill" style="width:40%;background:var(--purple)"></div></div>
+        <div class="phase-card">
+          <div class="phase-card-head">
+            <div class="phase-num" style="background:var(--md-primary-container);color:var(--md-on-primary-container)">2</div>
+            <span class="phase-name">Коммуникации</span>
+            <span class="phase-pct" style="color:var(--md-primary)">50%</span>
+          </div>
+          <div class="phase-track"><div class="phase-indicator" style="width:50%;background:var(--md-primary)"></div></div>
+          <div class="phase-chips">
+            <span class="phase-chip" style="background:var(--md-primary-container);color:var(--md-on-primary-container)">Gmail ✓</span>
+            <span class="phase-chip" style="background:var(--md-primary-container);color:var(--md-on-primary-container)">Calendar ✓</span>
+            <span class="phase-chip" style="background:var(--md-surface-container-high);color:var(--md-on-surface-variant)">Slack</span>
           </div>
         </div>
-        <span class="task-badge" style="background:var(--purple-bg);color:var(--purple)">40%</span>
-      </div>
-      <div class="task">
-        <div class="task-icon" style="background:var(--blue-bg)">🌐</div>
-        <div class="task-body">
-          <div class="task-name">Бесплатный домен + деплой</div>
-          <div class="task-meta">ivan-agents.us.kg → Cloudflare Pages + Access</div>
-          <div class="task-progress-wrap">
-            <div class="task-progress-bar"><div class="task-progress-fill" style="width:80%;background:var(--blue)"></div></div>
+        <div class="phase-card">
+          <div class="phase-card-head">
+            <div class="phase-num" style="background:var(--md-secondary-container);color:var(--md-on-secondary-container)">3</div>
+            <span class="phase-name">Разработка</span>
+            <span class="phase-pct" style="color:var(--md-secondary)">20%</span>
+          </div>
+          <div class="phase-track"><div class="phase-indicator" style="width:20%;background:var(--md-secondary)"></div></div>
+          <div class="phase-chips">
+            <span class="phase-chip" style="background:var(--md-surface-container-high);color:var(--md-on-surface-variant)">GitHub</span>
+            <span class="phase-chip" style="background:var(--md-surface-container-high);color:var(--md-on-surface-variant)">playwright</span>
           </div>
         </div>
-        <span class="task-badge" style="background:var(--blue-bg);color:var(--blue)">80%</span>
-      </div>
-      <div class="task">
-        <div class="task-icon" style="background:var(--green-bg)">⚙️</div>
-        <div class="task-body">
-          <div class="task-name">n8n автоматизация</div>
-          <div class="task-meta">Бесплатный Zapier — 400+ интеграций</div>
-          <div class="task-progress-wrap">
-            <div class="task-progress-bar"><div class="task-progress-fill" style="width:10%;background:var(--green)"></div></div>
+        <div class="phase-card">
+          <div class="phase-card-head">
+            <div class="phase-num" style="background:var(--md-error-container);color:var(--md-on-error-container)">4</div>
+            <span class="phase-name">Автоматизация</span>
+            <span class="phase-pct" style="color:var(--md-error)">15%</span>
+          </div>
+          <div class="phase-track"><div class="phase-indicator" style="width:15%;background:var(--md-error)"></div></div>
+          <div class="phase-chips">
+            <span class="phase-chip" style="background:var(--md-surface-container-high);color:var(--md-on-surface-variant)">n8n</span>
+            <span class="phase-chip" style="background:var(--md-primary-container);color:var(--md-on-primary-container)">Scheduler ✓</span>
           </div>
         </div>
-        <span class="task-badge" style="background:var(--green-bg);color:var(--green)">план</span>
+      </div>
+
+      <div class="sec-head">Активные задачи</div>
+      <div id="dash-preview"></div>
+    </div>
+
+    <!-- ── TASKS ── -->
+    <div class="view" id="view-tasks">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="font:var(--md-headline-m);font-weight:500">Задачи</div>
+        <button class="fab-extended" onclick="openAddTask()">
+          <span style="font-size:20px">＋</span> Новая задача
+        </button>
+      </div>
+
+      <!-- Add task form -->
+      <div id="add-task-form" style="display:none;background:var(--md-surface-container-high);border-radius:var(--md-shape-l);padding:20px;margin-bottom:16px">
+        <div style="font:var(--md-title-s);font-weight:500;margin-bottom:16px">Новая задача</div>
+        <div class="field" style="margin-bottom:12px">
+          <input class="field-input" id="task-inp" placeholder=" " onkeydown="if(event.key==='Enter')submitTask()">
+          <label class="field-label">Название задачи</label>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+          <div class="chip selected" id="cat-general" onclick="selectCat('general')"><span class="chip-icon">📌</span>Общее</div>
+          <div class="chip" id="cat-agent" onclick="selectCat('agent')"><span class="chip-icon">🤖</span>Агент</div>
+          <div class="chip" id="cat-dev" onclick="selectCat('dev')"><span class="chip-icon">⚙️</span>Разработка</div>
+          <div class="chip" id="cat-deploy" onclick="selectCat('deploy')"><span class="chip-icon">🌐</span>Деплой</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-filled" onclick="submitTask()">Добавить</button>
+          <button class="btn-text" onclick="closeAddTask()">Отмена</button>
+        </div>
+      </div>
+
+      <div class="sec-head">Активные</div>
+      <div class="task-list" id="task-active"></div>
+      <div class="sec-head" id="sec-done" style="margin-top:24px">Выполненные</div>
+      <div class="task-list" id="task-done"></div>
+    </div>
+
+    <!-- ── AGENTS ── -->
+    <div class="view" id="view-agents">
+      <div style="font:var(--md-headline-m);font-weight:500;margin-bottom:20px">Агенты</div>
+      <div class="sec-head">Подключены</div>
+      <div class="agent-grid">
+        <div class="agent-card">
+          <div class="agent-card-head">
+            <div class="agent-avatar" style="background:var(--md-error-container)">📧</div>
+            <div><div class="agent-card-name">Gmail</div><div class="agent-card-status" style="color:#4CAF50">● Онлайн</div></div>
+          </div>
+          <div class="agent-card-desc">Читает входящие, создаёт черновики, управляет метками и тредами</div>
+          <div class="agent-card-tools"><span class="tool-chip">search</span><span class="tool-chip">draft</span><span class="tool-chip">label</span><span class="tool-chip">thread</span></div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-card-head">
+            <div class="agent-avatar" style="background:var(--md-primary-container)">📅</div>
+            <div><div class="agent-card-name">Google Calendar</div><div class="agent-card-status" style="color:#4CAF50">● Онлайн</div></div>
+          </div>
+          <div class="agent-card-desc">Создаёт события, проверяет расписание, находит свободные слоты</div>
+          <div class="agent-card-tools"><span class="tool-chip">events</span><span class="tool-chip">schedule</span><span class="tool-chip">suggest_time</span></div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-card-head">
+            <div class="agent-avatar" style="background:var(--md-tertiary-container)">📁</div>
+            <div><div class="agent-card-name">Google Drive</div><div class="agent-card-status" style="color:#4CAF50">● Онлайн</div></div>
+          </div>
+          <div class="agent-card-desc">Ищет и читает файлы, создаёт документы, управляет структурой</div>
+          <div class="agent-card-tools"><span class="tool-chip">search</span><span class="tool-chip">read</span><span class="tool-chip">create</span><span class="tool-chip">metadata</span></div>
+        </div>
+      </div>
+      <div class="sec-head">Ожидают подключения</div>
+      <div class="agent-grid">
+        <div class="agent-card" style="opacity:.5">
+          <div class="agent-card-head">
+            <div class="agent-avatar" style="background:var(--md-surface-container-highest)">💬</div>
+            <div><div class="agent-card-name">Slack</div><div class="agent-card-status" style="color:var(--md-outline)">○ Не подключён</div></div>
+          </div>
+          <div class="agent-card-desc">Каналы, сообщения, дайджесты, поиск по истории</div>
+          <div class="agent-card-tools"><span class="tool-chip">channels</span><span class="tool-chip">messages</span><span class="tool-chip">search</span></div>
+        </div>
+        <div class="agent-card" style="opacity:.5">
+          <div class="agent-card-head">
+            <div class="agent-avatar" style="background:var(--md-surface-container-highest)">🐙</div>
+            <div><div class="agent-card-name">GitHub</div><div class="agent-card-status" style="color:var(--md-outline)">○ Не подключён</div></div>
+          </div>
+          <div class="agent-card-desc">Репозитории, pull requests, issues, code review</div>
+          <div class="agent-card-tools"><span class="tool-chip">repos</span><span class="tool-chip">PR</span><span class="tool-chip">issues</span></div>
+        </div>
+        <div class="agent-card" style="opacity:.5">
+          <div class="agent-card-head">
+            <div class="agent-avatar" style="background:var(--md-surface-container-highest)">✈️</div>
+            <div><div class="agent-card-name">Telegram</div><div class="agent-card-status" style="color:var(--md-outline)">○ Не подключён</div></div>
+          </div>
+          <div class="agent-card-desc">Чтение каналов, поиск ИИ-ресурсов, уведомления</div>
+          <div class="agent-card-tools"><span class="tool-chip">channels</span><span class="tool-chip">notify</span><span class="tool-chip">search</span></div>
+        </div>
       </div>
     </div>
 
-    <div class="section-title">Прогресс по фазам</div>
-    <div class="phase-grid">
-      <div class="phase-card">
-        <div class="phase-head">
-          <div class="phase-num" style="background:var(--amber-bg);color:var(--amber)">1</div>
-          <span class="phase-title">Память и знания</span>
-          <span class="phase-pct" style="color:var(--amber)">60%</span>
+    <!-- ── MEMORY ── -->
+    <div class="view" id="view-memory">
+      <div style="font:var(--md-headline-m);font-weight:500;margin-bottom:20px">Память агента</div>
+      <div class="mem-grid">
+        <div class="mem-card">
+          <div class="mem-card-head"><span class="mem-card-title">👤 Контекст</span><button class="btn-tonal" onclick="saveMem('context')" style="height:32px;padding:0 16px;font-size:12px">Сохранить</button></div>
+          <div class="mem-body"><textarea class="field-textarea" id="mem-context" placeholder="Информация о тебе, твоих целях и предпочтениях..."></textarea></div>
         </div>
-        <div class="phase-bar"><div class="phase-fill" style="width:60%;background:var(--amber)"></div></div>
-        <div class="phase-items">claude-mem · anytype · superpowers</div>
-      </div>
-      <div class="phase-card">
-        <div class="phase-head">
-          <div class="phase-num" style="background:var(--green-bg);color:var(--green)">2</div>
-          <span class="phase-title">Коммуникации</span>
-          <span class="phase-pct" style="color:var(--green)">50%</span>
+        <div class="mem-card">
+          <div class="mem-card-head"><span class="mem-card-title">🚀 Проекты</span><button class="btn-tonal" onclick="saveMem('projects')" style="height:32px;padding:0 16px;font-size:12px">Сохранить</button></div>
+          <div class="mem-body"><textarea class="field-textarea" id="mem-projects" placeholder="Активные проекты и их статус..."></textarea></div>
         </div>
-        <div class="phase-bar"><div class="phase-fill" style="width:50%;background:var(--green)"></div></div>
-        <div class="phase-items">Gmail ✓ · Calendar ✓ · Slack · Telegram</div>
-      </div>
-      <div class="phase-card">
-        <div class="phase-head">
-          <div class="phase-num" style="background:var(--blue-bg);color:var(--blue)">3</div>
-          <span class="phase-title">Разработка</span>
-          <span class="phase-pct" style="color:var(--blue)">20%</span>
+        <div class="mem-card" style="grid-column:1/-1">
+          <div class="mem-card-head"><span class="mem-card-title">📝 История решений</span><button class="btn-tonal" onclick="saveMem('decisions')" style="height:32px;padding:0 16px;font-size:12px">Сохранить</button></div>
+          <div class="mem-body"><textarea class="field-textarea" id="mem-decisions" style="min-height:140px" placeholder="Ключевые решения и их обоснование..."></textarea></div>
         </div>
-        <div class="phase-bar"><div class="phase-fill" style="width:20%;background:var(--blue)"></div></div>
-        <div class="phase-items">GitHub · playwright-mcp · Linear</div>
-      </div>
-      <div class="phase-card">
-        <div class="phase-head">
-          <div class="phase-num" style="background:var(--purple-bg);color:var(--purple)">4</div>
-          <span class="phase-title">Автоматизация</span>
-          <span class="phase-pct" style="color:var(--purple)">10%</span>
-        </div>
-        <div class="phase-bar"><div class="phase-fill" style="width:10%;background:var(--purple)"></div></div>
-        <div class="phase-items">n8n · scheduled tasks ✓ · webhooks</div>
       </div>
     </div>
-  </div>
 
-  <!-- LOG -->
-  <div class="log-panel">
-    <div class="log-top">
-      <h3>Живой лог агентов</h3>
-      <div class="status-dot"></div>
-    </div>
-    <div class="log-scroll scroll-hide" id="log">
-      <div class="log-entry">
-        <span class="log-time">сейчас</span>
-        <div class="log-dot" style="background:var(--green)"></div>
-        <span class="log-text"><b>Память</b> — создан файл context.md ✓</span>
-      </div>
-      <div class="log-entry">
-        <span class="log-time">1м</span>
-        <div class="log-dot" style="background:var(--green)"></div>
-        <span class="log-text"><b>Память</b> — создан файл projects.md ✓</span>
-      </div>
-      <div class="log-entry">
-        <span class="log-time">2м</span>
-        <div class="log-dot" style="background:var(--green)"></div>
-        <span class="log-text"><b>Память</b> — создан файл decisions.md ✓</span>
-      </div>
-      <div class="log-entry">
-        <span class="log-time">3м</span>
-        <div class="log-dot" style="background:var(--blue)"></div>
-        <span class="log-text"><b>Агент</b> — изучены 5 ресурсов: FreeDomain, SkillOpt, plugins, LazyWeb, 100 repos</span>
-      </div>
-      <div class="log-divider"></div>
-      <div class="log-entry">
-        <span class="log-time">5м</span>
-        <div class="log-dot" style="background:var(--purple)"></div>
-        <span class="log-text"><b>Плагины</b> — найдено 11 плагинов Anthropic</span>
-      </div>
-      <div class="log-entry">
-        <span class="log-time">8м</span>
-        <div class="log-dot" style="background:var(--amber)"></div>
-        <span class="log-text"><b>Дашборд</b> — начата сборка командного центра</span>
-      </div>
-      <div class="log-entry">
-        <span class="log-time">10м</span>
-        <div class="log-dot" style="background:var(--text3)"></div>
-        <span class="log-text"><b>Система</b> — инициализация рабочего пространства</span>
+    <!-- ── AUTOMATION ── -->
+    <div class="view" id="view-auto">
+      <div style="font:var(--md-headline-m);font-weight:500;margin-bottom:20px">Автоматизация</div>
+      <div class="sec-head">Правила агентов</div>
+      <div class="auto-list">
+        <div class="auto-item"><span class="auto-icon">☀️</span><div class="auto-body"><div class="auto-name">Утренний дайджест</div><div class="auto-desc">Каждый день в 08:00 — почта, календарь, задачи</div></div><div class="md-switch on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="auto-item"><span class="auto-icon">📧</span><div class="auto-body"><div class="auto-name">Важные письма</div><div class="auto-desc">Мгновенный алерт при получении важного письма</div></div><div class="md-switch on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="auto-item"><span class="auto-icon">📅</span><div class="auto-body"><div class="auto-name">Напоминания встреч</div><div class="auto-desc">За 30 минут — краткая повестка встречи</div></div><div class="md-switch on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="auto-item"><span class="auto-icon">🧠</span><div class="auto-body"><div class="auto-name">Обновление памяти</div><div class="auto-desc">Пятница 18:00 — итоги недели в memory</div></div><div class="md-switch" onclick="this.classList.toggle('on')"></div></div>
+        <div class="auto-item"><span class="auto-icon">🔍</span><div class="auto-body"><div class="auto-name">ИИ-новости</div><div class="auto-desc">Ежедневно 09:00 — обзор по агентам и LLM</div></div><div class="md-switch" onclick="this.classList.toggle('on')"></div></div>
       </div>
     </div>
-    <div class="cmd-area">
-      <div class="cmd-row">
-        <input class="cmd-input" id="cmd" placeholder="Команда агенту..." onkeydown="if(event.key==='Enter')sendCmd()">
-        <button class="cmd-btn" onclick="sendCmd()">▶</button>
-      </div>
-    </div>
-  </div>
 
-</div>
+    <!-- ── LOG ── -->
+    <div class="view" id="view-log">
+      <div style="font:var(--md-headline-m);font-weight:500;margin-bottom:20px">Лог агентов</div>
+      <div class="log-surface">
+        <div class="log-head"><div class="live-dot"></div>Активность в реальном времени</div>
+        <div class="log-body" id="log-body"></div>
+        <div class="log-cmd">
+          <input class="field-input" id="cmd-inp" placeholder=" " style="flex:1;height:48px;border-radius:var(--md-shape-full);padding:0 20px;border-bottom:none;border:1px solid var(--md-outline)" onkeydown="if(event.key==='Enter')sendCmd()">
+          <button class="btn-filled" onclick="sendCmd()">▶ Запустить</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main-area -->
 
 <script>
-  // Часы
-  function updateClock() {
-    var now = new Date();
-    var h = now.getHours().toString().padStart(2,'0');
-    var m = now.getMinutes().toString().padStart(2,'0');
-    document.getElementById('clock').textContent = h + ':' + m;
-  }
-  setInterval(updateClock, 1000);
-  updateClock();
+// ── STORAGE ───────────────────────────────────────────────────────────────
+var TK='aic_tasks', MK='aic_mem';
+var defaultTasks=[
+  {id:1,title:'Подключить расширение Claude in Chrome',cat:'deploy',done:false,pct:20},
+  {id:2,title:'Установить claude-mem (постоянная память)',cat:'agent',done:false,pct:60},
+  {id:3,title:'Задеплоить дашборд — GitHub Pages',cat:'deploy',done:true,pct:100},
+  {id:4,title:'Подключить n8n автоматизацию',cat:'dev',done:false,pct:5},
+  {id:5,title:'Найти ИИ-каналы в Telegram',cat:'agent',done:false,pct:0},
+];
+var defaultMem={
+  context:'# Контекст: Иван\n\n- Email: ivan.mashhikov@gmail.com\n- Цель: 100% бесплатное ИИ-пространство\n- Инструменты: GitHub, Slack, Gmail, Calendar, Drive\n- Приоритет: бесплатные решения',
+  projects:'# Активные проекты\n\n## AI Workspace\n✓ Архитектурный план\n✓ Дашборд задеплоен (GitHub Pages)\n⟳ Подключение агентов\n⟳ Telegram доступ\n⟳ n8n автоматизация',
+  decisions:'# История решений\n\n## 2026-05-28\n- Домен: GitHub Pages (ivanmashhikov-sudo.github.io)\n- Память: claude-mem + md файлы\n- Автоматизация: n8n self-hosted\n- Дизайн: Material Design 3'
+};
+function loadTasks(){try{return JSON.parse(localStorage.getItem(TK))||defaultTasks}catch{return defaultTasks}}
+function saveTasks(t){localStorage.setItem(TK,JSON.stringify(t))}
+function loadMem(){try{return JSON.parse(localStorage.getItem(MK))||defaultMem}catch{return defaultMem}}
+function saveMem(k){var m=loadMem();m[k]=document.getElementById('mem-'+k).value;localStorage.setItem(MK,JSON.stringify(m));addLog('var(--md-tertiary)','Память','сохранено: '+k)}
 
-  // Приветствие
-  var hour = new Date().getHours();
-  var greet = hour < 12 ? 'Доброе утро' : hour < 18 ? 'Добрый день' : 'Добрый вечер';
-  document.getElementById('greeting-sub').textContent = greet + ', сегодня ' + new Date().toLocaleDateString('ru-RU', {weekday:'long', day:'numeric', month:'long'});
+// ── NAVIGATION ────────────────────────────────────────────────────────────
+var titles={'dash':'Обзор','tasks':'Задачи','agents':'Агенты','memory':'Память','auto':'Автоматизация','log':'Лог агентов'};
+function show(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.getElementById('top-title').textContent=titles[id]||'';
+  if(id==='tasks'){renderTasks();loadMemView();}
+  if(id==='memory')loadMemView();
+  if(id==='dash'){renderMetrics();renderDashPreview();}
+  if(id==='log')renderLog();
+}
 
-  // Живой лог
-  var logItems = [
-    ['var(--green)', 'Gmail', 'проверил входящие — 0 новых'],
-    ['var(--blue)', 'Calendar', 'найдено событий на завтра: 2'],
-    ['var(--amber)', 'Память', 'контекст обновлён'],
-    ['var(--purple)', 'Агент', 'задача поставлена в очередь'],
-    ['var(--green)', 'Drive', 'найдено 3 новых файла'],
-    ['var(--blue)', 'Расписание', 'запущен утренний дайджест'],
-  ];
-  var li = 0, ti = 0;
-  var times = ['сейчас','1м','2м','3м','5м','8м','10м','15м'];
-  function addLog(c, agent, text) {
-    var log = document.getElementById('log');
-    var div = document.createElement('div');
-    div.className = 'log-entry';
-    div.innerHTML = '<span class="log-time">' + times[ti % times.length] + '</span><div class="log-dot" style="background:' + c + '"></div><span class="log-text"><b>' + agent + '</b> — ' + text + '</span>';
-    log.insertBefore(div, log.firstChild);
-    if (log.children.length > 15) log.removeChild(log.lastChild);
-    ti++;
-  }
-  setInterval(function() {
-    var l = logItems[li % logItems.length];
-    addLog(l[0], l[1], l[2]);
-    li++;
-  }, 3500);
+// ── CLOCK ─────────────────────────────────────────────────────────────────
+function tick(){
+  var n=new Date(),h=n.getHours(),m=String(n.getMinutes()).padStart(2,'0');
+  document.getElementById('clock-chip').textContent=String(h).padStart(2,'0')+':'+m;
+  var g=h<6?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер';
+  document.getElementById('greeting').textContent=g+', Иван 👋';
+  document.getElementById('greeting-sub').textContent='Сегодня '+n.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+setInterval(tick,1000);tick();
 
-  function sendCmd() {
-    var v = document.getElementById('cmd').value.trim();
-    if (!v) return;
-    addLog('var(--purple)', 'Ты', '"' + v.substring(0,45) + '"');
-    document.getElementById('cmd').value = '';
-    setTimeout(function() { addLog('var(--green)', 'Агент', 'команда принята ✓'); }, 700);
-  }
+// ── TASKS ─────────────────────────────────────────────────────────────────
+var catData={general:{icon:'📌',bg:'var(--md-surface-container-highest)',color:'var(--md-on-surface-variant)',ind:'var(--md-outline)'},
+  agent:{icon:'🤖',bg:'var(--md-primary-container)',color:'var(--md-on-primary-container)',ind:'var(--md-primary)'},
+  dev:{icon:'⚙️',bg:'var(--md-secondary-container)',color:'var(--md-on-secondary-container)',ind:'var(--md-secondary)'},
+  deploy:{icon:'🌐',bg:'var(--md-tertiary-container)',color:'var(--md-on-tertiary-container)',ind:'var(--md-tertiary)'}};
+var selectedCat='general';
+
+function selectCat(c){
+  selectedCat=c;
+  ['general','agent','dev','deploy'].forEach(x=>{
+    document.getElementById('cat-'+x).className='chip'+(x===c?' selected':'');
+  });
+}
+function openAddTask(){
+  document.getElementById('add-task-form').style.display='block';
+  setTimeout(()=>document.getElementById('task-inp').focus(),50);
+}
+function closeAddTask(){document.getElementById('add-task-form').style.display='none';document.getElementById('task-inp').value=''}
+function submitTask(){
+  var v=document.getElementById('task-inp').value.trim();
+  if(!v)return;
+  var tasks=loadTasks();
+  tasks.unshift({id:Date.now(),title:v,cat:selectedCat,done:false,pct:0});
+  saveTasks(tasks);closeAddTask();renderTasks();renderMetrics();
+  addLog('var(--md-primary)','Задачи','добавлена: '+v.substring(0,40));
+}
+function toggleTask(id){
+  var tasks=loadTasks(),t=tasks.find(x=>x.id===id);
+  if(t){t.done=!t.done;if(t.done)t.pct=100;}
+  saveTasks(tasks);renderTasks();renderMetrics();renderDashPreview();
+  addLog('var(--md-tertiary)','Задачи',(t.done?'✓ ':'↩ ')+(t.title||'').substring(0,35));
+}
+function delTask(id){
+  saveTasks(loadTasks().filter(t=>t.id!==id));renderTasks();renderMetrics();
+}
+
+function mkTask(t,mini){
+  var c=catData[t.cat]||catData.general;
+  return `<div class="task-item${t.done?' done':''}" id="ti-${t.id}">
+    <div class="md-checkbox${t.done?' checked':''}" onclick="toggleTask(${t.id})"></div>
+    <div class="task-item-icon" style="background:${c.bg}">${c.icon}</div>
+    <div class="task-item-body">
+      <div class="task-item-title">${t.title}</div>
+      <div class="task-item-sub">${t.cat==='agent'?'Агент':t.cat==='dev'?'Разработка':t.cat==='deploy'?'Деплой':'Общее'}</div>
+      ${!t.done&&t.pct>0?`<div class="task-item-progress"><div class="task-item-fill" style="width:${t.pct}%;background:${c.ind}"></div></div>`:''}
+    </div>
+    <div class="task-item-end">
+      ${!t.done?`<span class="chip chip-assist" style="height:24px;font-size:11px;padding:0 8px">${t.pct}%</span>`:''}
+      ${!mini?`<button class="btn-text" style="height:28px;padding:0 8px;font-size:11px;color:var(--md-error)" onclick="delTask(${t.id})">удалить</button>`:''}
+    </div>
+  </div>`;
+}
+
+function renderTasks(){
+  var tasks=loadTasks();
+  var active=tasks.filter(t=>!t.done),done=tasks.filter(t=>t.done);
+  document.getElementById('task-active').innerHTML=active.length?active.map(t=>mkTask(t,false)).join(''):'<div style="font:var(--md-body-m);color:var(--md-outline);padding:12px 4px">Нет активных задач</div>';
+  document.getElementById('task-done').innerHTML=done.length?done.map(t=>mkTask(t,false)).join(''):'';
+  document.getElementById('sec-done').style.display=done.length?'flex':'none';
+  document.getElementById('nb-tasks').textContent=active.length;
+  renderMetrics();
+}
+
+function renderMetrics(){
+  var tasks=loadTasks();
+  document.getElementById('ds-active').textContent=tasks.filter(t=>!t.done).length;
+  document.getElementById('ds-done').textContent=tasks.filter(t=>t.done).length;
+}
+function renderDashPreview(){
+  var tasks=loadTasks().filter(t=>!t.done).slice(0,3);
+  document.getElementById('dash-preview').innerHTML=tasks.length
+    ?'<div class="task-list">'+tasks.map(t=>mkTask(t,true)).join('')+'</div>'
+    :'<div style="font:var(--md-body-m);color:var(--md-outline);padding:8px 4px">Все задачи выполнены 🎉</div>';
+}
+
+// ── MEMORY ────────────────────────────────────────────────────────────────
+function loadMemView(){var m=loadMem();['context','projects','decisions'].forEach(k=>{var el=document.getElementById('mem-'+k);if(el)el.value=m[k]||''})}
+
+// ── LOG ───────────────────────────────────────────────────────────────────
+var logs=[],logTmpl=[
+  ['var(--md-primary)','Gmail','проверил входящие — новых писем нет'],
+  ['var(--md-tertiary)','Calendar','найдено событий на завтра: 2'],
+  ['var(--md-secondary)','Drive','файлы проверены'],
+  ['var(--md-primary)','Агент','ожидаю следующую команду'],
+  ['var(--md-tertiary)','Расписание','дайджест в 08:00'],
+],li=0;
+
+function addLog(c,a,t){
+  var n=new Date(),ts=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+  logs.unshift({c,a,t,ts});if(logs.length>80)logs.pop();
+  renderLog();
+}
+function renderLog(){
+  var el=document.getElementById('log-body');if(!el)return;
+  el.innerHTML=logs.map(l=>`<div class="log-row"><span class="log-time">${l.ts}</span><div class="log-dot" style="background:${l.c}"></div><span class="log-text"><b>${l.a}</b> — ${l.t}</span></div>`).join('');
+}
+function sendCmd(){
+  var inp=document.getElementById('cmd-inp'),v=inp.value.trim();
+  if(!v)return;
+  addLog('var(--md-secondary)','Ты','"'+v.substring(0,60)+'"');
+  inp.value='';
+  setTimeout(()=>addLog('var(--md-primary)','Агент','команда принята ✓'),500);
+}
+setInterval(()=>{var l=logTmpl[li%logTmpl.length];addLog(l[0],l[1],l[2]);li++},4500);
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+addLog('var(--md-primary)','Система','AI Command Center v2 запущен ✓');
+addLog('var(--md-primary)','Gmail','подключён');
+addLog('var(--md-primary)','Calendar','подключён');
+addLog('var(--md-tertiary)','Drive','подключён');
+renderTasks();renderMetrics();renderDashPreview();loadMemView();
 </script>
 </body>
 </html>
