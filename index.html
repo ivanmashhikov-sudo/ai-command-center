@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ivan · AI Command Center</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #232636;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #e8eaf0;
+    --text2: #8b90a8;
+    --text3: #4e5370;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.1);
+    --blue: #60a5fa;
+    --blue-bg: rgba(96,165,250,0.1);
+    --amber: #fbbf24;
+    --amber-bg: rgba(251,191,36,0.1);
+    --purple: #a78bfa;
+    --purple-bg: rgba(167,139,250,0.1);
+    --red: #f87171;
+    --red-bg: rgba(248,113,113,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── TOP BAR ── */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-bottom: 1px solid var(--border); background: var(--bg2); position: sticky; top: 0; z-index: 100; }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 32px; height: 32px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .topbar-title { font-size: 15px; font-weight: 600; }
+  .topbar-sub { font-size: 11px; color: var(--text2); }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+  .topbar-right { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text2); }
+  .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+
+  /* ── LAYOUT ── */
+  .layout { display: grid; grid-template-columns: 220px 1fr 280px; height: calc(100vh - 57px); }
+
+  /* ── SIDEBAR ── */
+  .sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 16px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 20px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--text3); padding: 0 16px; margin-bottom: 6px; letter-spacing: .08em; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all .15s; border-left: 2px solid transparent; }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .nav-item.active { color: var(--blue); background: var(--blue-bg); border-left-color: var(--blue); }
+  .nav-icon { width: 18px; text-align: center; font-size: 14px; }
+  .nav-count { margin-left: auto; font-size: 10px; padding: 1px 6px; border-radius: 8px; background: rgba(255,255,255,0.08); }
+
+  .agent-card { margin: 8px 12px; background: var(--bg3); border-radius: 8px; padding: 10px 12px; border: 1px solid var(--border); }
+  .agent-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .agent-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .agent-name { font-size: 12px; color: var(--text); flex: 1; }
+  .agent-st { font-size: 10px; }
+
+  /* ── MAIN ── */
+  .main { overflow-y: auto; padding: 20px 24px; }
+  .greeting { margin-bottom: 20px; }
+  .greeting h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .greeting p { font-size: 13px; color: var(--text2); }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .stat-num { font-size: 24px; font-weight: 600; margin-bottom: 2px; }
+  .stat-label { font-size: 11px; color: var(--text2); }
+  .stat-trend { font-size: 10px; margin-top: 4px; }
+
+  .section-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .tasks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .task { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; transition: border-color .15s; cursor: pointer; }
+  .task:hover { border-color: var(--border2); }
+  .task-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .task-body { flex: 1; }
+  .task-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .task-meta { font-size: 11px; color: var(--text2); }
+  .task-badge { font-size: 10px; padding: 3px 8px; border-radius: 8px; font-weight: 500; white-space: nowrap; }
+  .task-progress-wrap { margin-top: 6px; }
+  .task-progress-bar { height: 3px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+  .task-progress-fill { height: 100%; border-radius: 2px; transition: width .8s; }
+
+  .phase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .phase-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .phase-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .phase-num { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .phase-title { font-size: 12px; font-weight: 600; flex: 1; }
+  .phase-pct { font-size: 12px; font-weight: 600; }
+  .phase-bar { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
+  .phase-fill { height: 100%; border-radius: 2px; }
+  .phase-items { font-size: 11px; color: var(--text2); }
+
+  /* ── LOG PANEL ── */
+  .log-panel { background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  .log-top { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .log-top h3 { font-size: 13px; font-weight: 600; }
+  .log-scroll { flex: 1; overflow-y: auto; padding: 12px; }
+  .log-entry { display: flex; gap: 8px; margin-bottom: 14px; align-items: flex-start; }
+  .log-time { font-size: 10px; color: var(--text3); min-width: 38px; padding-top: 2px; }
+  .log-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .log-text { font-size: 12px; color: var(--text2); line-height: 1.45; }
+  .log-text b { color: var(--text); }
+  .log-divider { height: 1px; background: var(--border); margin: 10px 0; }
+
+  .cmd-area { padding: 12px; border-top: 1px solid var(--border); }
+  .cmd-row { display: flex; gap: 8px; }
+  .cmd-input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--text); outline: none; transition: border-color .15s; }
+  .cmd-input:focus { border-color: var(--blue); }
+  .cmd-input::placeholder { color: var(--text3); }
+  .cmd-btn { background: var(--blue-bg); border: 1px solid rgba(96,165,250,0.3); border-radius: 8px; padding: 8px 12px; color: var(--blue); font-size: 12px; cursor: pointer; font-weight: 500; transition: background .15s; }
+  .cmd-btn:hover { background: rgba(96,165,250,0.2); }
+
+  .scroll-hide::-webkit-scrollbar { width: 4px; }
+  .scroll-hide::-webkit-scrollbar-track { background: transparent; }
+  .scroll-hide::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">🤖</div>
+    <div>
+      <div class="topbar-title">AI Command Center</div>
+      <div class="topbar-sub">Иван · Личное пространство</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="status-dot"></div>
+    <span style="color:var(--green);font-size:12px">Агенты онлайн</span>
+    <span class="badge" style="background:var(--purple-bg);color:var(--purple)" id="clock"></span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar scroll-hide">
+    <div class="nav-section">
+      <div class="nav-label">Навигация</div>
+      <div class="nav-item active"><span class="nav-icon">⚡</span>Дашборд</div>
+      <div class="nav-item"><span class="nav-icon">📋</span>Задачи<span class="nav-count" id="task-count">4</span></div>
+      <div class="nav-item"><span class="nav-icon">🧠</span>Память</div>
+      <div class="nav-item"><span class="nav-icon">🔌</span>Агенты</div>
+      <div class="nav-item"><span class="nav-icon">⚙️</span>Автоматизация</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Агенты</div>
+      <div class="agent-card">
+        <div class="agent-row">
+          <div class="agent-dot" style="background:var(--green)"></div>
+          <span class="agent-name">Gmail</span>
+          <span class="agent-st" style="color:var(--green)">●</span>
+        </div>
+        <div class="agent-row">
+          <div class="agent-dot" style="background:var(--green)"></div>
+          <span class="agent-name">Google Calendar</span>
+          <span class="agent-st" style="color:var(--green)">●</span>
+        </div>
+        <div class="agent-row">
+          <div class="agent-dot" style="background:var(--green)"></div>
+          <span class="agent-name">Google Drive</span>
+          <span class="agent-st" style="color:var(--green)">●</span>
+        </div>
+        <div class="agent-row">
+          <div class="agent-dot" style="background:var(--amber)"></div>
+          <span class="agent-name">Браузер</span>
+          <span class="agent-st" style="color:var(--amber)">◐</span>
+        </div>
+        <div class="agent-row">
+          <div class="agent-dot" style="background:var(--amber)"></div>
+          <span class="agent-name">Память</span>
+          <span class="agent-st" style="color:var(--amber)">◐</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Ожидают</div>
+      <div class="agent-card">
+        <div class="agent-row">
+          <div class="agent-dot" style="background:var(--text3)"></div>
+          <span class="agent-name" style="color:var(--text2)">Slack</span>
+        </div>
+        <div class="agent-row">
+          <div class="agent-dot" style="background:var(--text3)"></div>
+          <span class="agent-name" style="color:var(--text2)">GitHub</span>
+        </div>
+        <div class="agent-row">
+          <div class="agent-dot" style="background:var(--text3)"></div>
+          <span class="agent-name" style="color:var(--text2)">n8n</span>
+        </div>
+        <div class="agent-row">
+          <div class="agent-dot" style="background:var(--text3)"></div>
+          <span class="agent-name" style="color:var(--text2)">Telegram</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main scroll-hide">
+    <div class="greeting">
+      <h1>Привет, Иван 👋</h1>
+      <p id="greeting-sub">Загрузка данных...</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--green)" id="s1">3</div>
+        <div class="stat-label">агентов онлайн</div>
+        <div class="stat-trend" style="color:var(--green)">↑ +2 к следующей неделе</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--blue)" id="s2">4</div>
+        <div class="stat-label">активных задачи</div>
+        <div class="stat-trend" style="color:var(--blue)">● в прогрессе</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--purple)" id="s3">11</div>
+        <div class="stat-label">плагинов готово</div>
+        <div class="stat-trend" style="color:var(--purple)">Anthropic knowledge-work</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--amber)" id="s4">35%</div>
+        <div class="stat-label">покрытие системы</div>
+        <div class="stat-trend" style="color:var(--amber)">→ цель 100%</div>
+      </div>
+    </div>
+
+    <div class="section-title">Активные задачи</div>
+    <div class="tasks">
+      <div class="task">
+        <div class="task-icon" style="background:var(--amber-bg)">🧠</div>
+        <div class="task-body">
+          <div class="task-name">Установка claude-mem</div>
+          <div class="task-meta">Постоянная память агента между сессиями</div>
+          <div class="task-progress-wrap">
+            <div class="task-progress-bar"><div class="task-progress-fill" style="width:60%;background:var(--amber)"></div></div>
+          </div>
+        </div>
+        <span class="task-badge" style="background:var(--amber-bg);color:var(--amber)">60%</span>
+      </div>
+      <div class="task">
+        <div class="task-icon" style="background:var(--purple-bg)">🔌</div>
+        <div class="task-body">
+          <div class="task-name">knowledge-work-plugins</div>
+          <div class="task-meta">11 официальных плагинов Anthropic</div>
+          <div class="task-progress-wrap">
+            <div class="task-progress-bar"><div class="task-progress-fill" style="width:40%;background:var(--purple)"></div></div>
+          </div>
+        </div>
+        <span class="task-badge" style="background:var(--purple-bg);color:var(--purple)">40%</span>
+      </div>
+      <div class="task">
+        <div class="task-icon" style="background:var(--blue-bg)">🌐</div>
+        <div class="task-body">
+          <div class="task-name">Бесплатный домен + деплой</div>
+          <div class="task-meta">ivan-agents.us.kg → Cloudflare Pages + Access</div>
+          <div class="task-progress-wrap">
+            <div class="task-progress-bar"><div class="task-progress-fill" style="width:80%;background:var(--blue)"></div></div>
+          </div>
+        </div>
+        <span class="task-badge" style="background:var(--blue-bg);color:var(--blue)">80%</span>
+      </div>
+      <div class="task">
+        <div class="task-icon" style="background:var(--green-bg)">⚙️</div>
+        <div class="task-body">
+          <div class="task-name">n8n автоматизация</div>
+          <div class="task-meta">Бесплатный Zapier — 400+ интеграций</div>
+          <div class="task-progress-wrap">
+            <div class="task-progress-bar"><div class="task-progress-fill" style="width:10%;background:var(--green)"></div></div>
+          </div>
+        </div>
+        <span class="task-badge" style="background:var(--green-bg);color:var(--green)">план</span>
+      </div>
+    </div>
+
+    <div class="section-title">Прогресс по фазам</div>
+    <div class="phase-grid">
+      <div class="phase-card">
+        <div class="phase-head">
+          <div class="phase-num" style="background:var(--amber-bg);color:var(--amber)">1</div>
+          <span class="phase-title">Память и знания</span>
+          <span class="phase-pct" style="color:var(--amber)">60%</span>
+        </div>
+        <div class="phase-bar"><div class="phase-fill" style="width:60%;background:var(--amber)"></div></div>
+        <div class="phase-items">claude-mem · anytype · superpowers</div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-head">
+          <div class="phase-num" style="background:var(--green-bg);color:var(--green)">2</div>
+          <span class="phase-title">Коммуникации</span>
+          <span class="phase-pct" style="color:var(--green)">50%</span>
+        </div>
+        <div class="phase-bar"><div class="phase-fill" style="width:50%;background:var(--green)"></div></div>
+        <div class="phase-items">Gmail ✓ · Calendar ✓ · Slack · Telegram</div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-head">
+          <div class="phase-num" style="background:var(--blue-bg);color:var(--blue)">3</div>
+          <span class="phase-title">Разработка</span>
+          <span class="phase-pct" style="color:var(--blue)">20%</span>
+        </div>
+        <div class="phase-bar"><div class="phase-fill" style="width:20%;background:var(--blue)"></div></div>
+        <div class="phase-items">GitHub · playwright-mcp · Linear</div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-head">
+          <div class="phase-num" style="background:var(--purple-bg);color:var(--purple)">4</div>
+          <span class="phase-title">Автоматизация</span>
+          <span class="phase-pct" style="color:var(--purple)">10%</span>
+        </div>
+        <div class="phase-bar"><div class="phase-fill" style="width:10%;background:var(--purple)"></div></div>
+        <div class="phase-items">n8n · scheduled tasks ✓ · webhooks</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG -->
+  <div class="log-panel">
+    <div class="log-top">
+      <h3>Живой лог агентов</h3>
+      <div class="status-dot"></div>
+    </div>
+    <div class="log-scroll scroll-hide" id="log">
+      <div class="log-entry">
+        <span class="log-time">сейчас</span>
+        <div class="log-dot" style="background:var(--green)"></div>
+        <span class="log-text"><b>Память</b> — создан файл context.md ✓</span>
+      </div>
+      <div class="log-entry">
+        <span class="log-time">1м</span>
+        <div class="log-dot" style="background:var(--green)"></div>
+        <span class="log-text"><b>Память</b> — создан файл projects.md ✓</span>
+      </div>
+      <div class="log-entry">
+        <span class="log-time">2м</span>
+        <div class="log-dot" style="background:var(--green)"></div>
+        <span class="log-text"><b>Память</b> — создан файл decisions.md ✓</span>
+      </div>
+      <div class="log-entry">
+        <span class="log-time">3м</span>
+        <div class="log-dot" style="background:var(--blue)"></div>
+        <span class="log-text"><b>Агент</b> — изучены 5 ресурсов: FreeDomain, SkillOpt, plugins, LazyWeb, 100 repos</span>
+      </div>
+      <div class="log-divider"></div>
+      <div class="log-entry">
+        <span class="log-time">5м</span>
+        <div class="log-dot" style="background:var(--purple)"></div>
+        <span class="log-text"><b>Плагины</b> — найдено 11 плагинов Anthropic</span>
+      </div>
+      <div class="log-entry">
+        <span class="log-time">8м</span>
+        <div class="log-dot" style="background:var(--amber)"></div>
+        <span class="log-text"><b>Дашборд</b> — начата сборка командного центра</span>
+      </div>
+      <div class="log-entry">
+        <span class="log-time">10м</span>
+        <div class="log-dot" style="background:var(--text3)"></div>
+        <span class="log-text"><b>Система</b> — инициализация рабочего пространства</span>
+      </div>
+    </div>
+    <div class="cmd-area">
+      <div class="cmd-row">
+        <input class="cmd-input" id="cmd" placeholder="Команда агенту..." onkeydown="if(event.key==='Enter')sendCmd()">
+        <button class="cmd-btn" onclick="sendCmd()">▶</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Часы
+  function updateClock() {
+    var now = new Date();
+    var h = now.getHours().toString().padStart(2,'0');
+    var m = now.getMinutes().toString().padStart(2,'0');
+    document.getElementById('clock').textContent = h + ':' + m;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Приветствие
+  var hour = new Date().getHours();
+  var greet = hour < 12 ? 'Доброе утро' : hour < 18 ? 'Добрый день' : 'Добрый вечер';
+  document.getElementById('greeting-sub').textContent = greet + ', сегодня ' + new Date().toLocaleDateString('ru-RU', {weekday:'long', day:'numeric', month:'long'});
+
+  // Живой лог
+  var logItems = [
+    ['var(--green)', 'Gmail', 'проверил входящие — 0 новых'],
+    ['var(--blue)', 'Calendar', 'найдено событий на завтра: 2'],
+    ['var(--amber)', 'Память', 'контекст обновлён'],
+    ['var(--purple)', 'Агент', 'задача поставлена в очередь'],
+    ['var(--green)', 'Drive', 'найдено 3 новых файла'],
+    ['var(--blue)', 'Расписание', 'запущен утренний дайджест'],
+  ];
+  var li = 0, ti = 0;
+  var times = ['сейчас','1м','2м','3м','5м','8м','10м','15м'];
+  function addLog(c, agent, text) {
+    var log = document.getElementById('log');
+    var div = document.createElement('div');
+    div.className = 'log-entry';
+    div.innerHTML = '<span class="log-time">' + times[ti % times.length] + '</span><div class="log-dot" style="background:' + c + '"></div><span class="log-text"><b>' + agent + '</b> — ' + text + '</span>';
+    log.insertBefore(div, log.firstChild);
+    if (log.children.length > 15) log.removeChild(log.lastChild);
+    ti++;
+  }
+  setInterval(function() {
+    var l = logItems[li % logItems.length];
+    addLog(l[0], l[1], l[2]);
+    li++;
+  }, 3500);
+
+  function sendCmd() {
+    var v = document.getElementById('cmd').value.trim();
+    if (!v) return;
+    addLog('var(--purple)', 'Ты', '"' + v.substring(0,45) + '"');
+    document.getElementById('cmd').value = '';
+    setTimeout(function() { addLog('var(--green)', 'Агент', 'команда принята ✓'); }, 700);
+  }
+</script>
+</body>
+</html>
