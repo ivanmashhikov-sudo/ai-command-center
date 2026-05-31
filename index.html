@@ -3,644 +3,1130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ivan · AI Command Center</title>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Mono&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<title>AI Command Center · ВНИИЖТ v3</title>
 <style>
-:root {
-  --md-primary:#D0BCFF; --md-on-primary:#381E72; --md-primary-container:#4F378B; --md-on-primary-container:#EADDFF;
-  --md-secondary:#CCC2DC; --md-on-secondary:#332D41; --md-secondary-container:#4A4458; --md-on-secondary-container:#E8DEF8;
-  --md-tertiary:#EFB8C8; --md-tertiary-container:#633B48; --md-on-tertiary-container:#FFD8E4;
-  --md-error:#F2B8B5; --md-error-container:#8C1D18; --md-on-error-container:#F9DEDC;
-  --md-surface:#141218; --md-surface-container-low:#1D1B20; --md-surface-container:#211F26;
-  --md-surface-container-high:#2B2930; --md-surface-container-highest:#36343B;
-  --md-on-surface:#E6E1E5; --md-on-surface-variant:#CAC4D0; --md-outline:#938F99; --md-outline-variant:#49454F;
-  --md-elev1:0 1px 2px rgba(0,0,0,.3),0 1px 3px 1px rgba(0,0,0,.15);
-  --md-elev2:0 1px 2px rgba(0,0,0,.3),0 2px 6px 2px rgba(0,0,0,.15);
-  --md-shape-s:8px; --md-shape-m:12px; --md-shape-l:16px; --md-shape-xl:28px;
-  --agent-dispatch:#7C6FE0; --agent-contract:#4CAF82; --agent-smm:#CE93D8;
-  --agent-memory:#FFB74D; --agent-browser:#4FC3F7; --agent-automation:#F06292; --agent-research:#81C784;
+:root{color-scheme:light;
+  --pri:#6750A4;--on-pri:#fff;--pri-c:#EADDFF;--on-pri-c:#21005D;
+  --sec:#625B71;--sec-c:#E8DEF8;--on-sec-c:#1D192B;
+  --ter-c:#FFD8E4;--on-ter-c:#31111D;
+  --sur:#FFFBFE;--sur-c:#F3EDF7;--sur-ch:#ECE6F0;--sur-chh:#E6E0E9;
+  --on-sur:#1C1B1F;--on-sur-v:#49454F;--out:#79747E;--out-v:#CAC4D0;
+  --err:#B3261E;--err-c:#F9DEDC;--ok:#2E7D32;--ok-c:#E8F5E9;
+  --sh1:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.08);
+  --sh2:0 3px 8px rgba(0,0,0,.12),0 1px 3px rgba(0,0,0,.08);
+  --r-s:8px;--r-m:12px;--r-l:16px;--r-xl:28px;
+  --c-dis:#3949AB;--c-con:#2E7D32;--c-smm:#6A1B9A;
+  --c-mem:#E65100;--c-bro:#0277BD;--c-aut:#880E4F;--c-res:#00695C;
+  --c-fin:#1565C0;--c-hr:#4A148C;--c-rep:#006064;--c-law:#BF360C;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--md-surface);color:var(--md-on-surface);font-family:'Google Sans',system-ui,sans-serif;display:flex;height:100vh;overflow:hidden}
+body{background:var(--sur);color:var(--on-sur);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:14px}
 
-/* NAV RAIL */
-.nav-rail{width:88px;background:var(--md-surface-container-low);display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:4px;flex-shrink:0;border-right:1px solid var(--md-outline-variant)}
-.nav-logo{width:44px;height:44px;border-radius:50%;background:var(--md-primary-container);display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:20px}
-.nav-item{width:72px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px;border-radius:var(--md-shape-l);cursor:pointer;transition:background .2s;position:relative;color:var(--md-on-surface-variant);user-select:none}
-.nav-item:hover{background:rgba(208,188,255,.08)}
-.nav-item.active{color:var(--md-on-primary-container)}
-.nav-item.active .nav-pill{background:var(--md-primary-container)}
-.nav-pill{width:56px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.nav-item .material-icons{font-size:22px}
-.nav-label{font-size:11px;font-weight:500;text-align:center;line-height:1.2}
-.nav-badge{position:absolute;top:8px;right:10px;background:#B3261E;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;display:none;align-items:center;justify-content:center;font-weight:700}
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--out-v);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;box-shadow:var(--sh1)}
+.tlogo{width:32px;height:32px;border-radius:50%;background:var(--pri-c);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ttitle{font-size:14px;font-weight:700;color:var(--on-sur)}
+.tsub{font-size:10px;color:var(--on-sur-v);margin-top:1px}
+.chip{background:var(--sur-c);border:1px solid var(--out-v);border-radius:8px;padding:3px 9px;font-size:11px;color:var(--on-sur-v);display:flex;align-items:center;gap:5px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#4CAF50;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* MAIN */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.top-bar{height:64px;display:flex;align-items:center;padding:0 24px;gap:12px;border-bottom:1px solid var(--md-outline-variant);flex-shrink:0}
-.top-bar h1{font-size:17px;font-weight:600;flex:1}
-.chip{background:var(--md-surface-container-high);border:1px solid var(--md-outline-variant);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--md-on-surface-variant);display:flex;align-items:center;gap:6px}
-.pulse{width:7px;height:7px;border-radius:50%;background:#4CAF50;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.content{flex:1;overflow-y:auto;padding:24px}
-.view{display:none}
-.view.active{display:block}
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--out-v);padding:0 8px;flex-shrink:0;overflow-x:auto;gap:0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 12px;font-size:12px;font-weight:500;color:var(--on-sur-v);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:4px}
+.tab:hover{color:var(--pri);background:rgba(103,80,164,.04)}
+.tab.active{color:var(--pri);border-bottom-color:var(--pri);font-weight:600}
 
-/* CARDS & GRID */
-.card{background:var(--md-surface-container);border-radius:var(--md-shape-l);padding:20px;margin-bottom:16px}
-.sec-title{font-size:11px;font-weight:600;color:var(--md-on-surface-variant);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.metric{background:var(--md-surface-container-high);border-radius:var(--md-shape-m);padding:16px}
-.metric-val{font-size:30px;font-weight:700;line-height:1}
-.metric-lbl{font-size:11px;color:var(--md-on-surface-variant);margin-top:4px}
+.content{flex:1;overflow:hidden;display:flex}
+.view{display:none;flex:1;overflow-y:auto;padding:16px}
+.view.active{display:flex;flex-direction:column}
+#view-chat{padding:0;flex-direction:row}
 
-/* AGENT GRID */
-.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:12px;margin-bottom:24px}
-.agent-card{background:var(--md-surface-container);border-radius:var(--md-shape-l);padding:14px 16px;border-left:3px solid #555;cursor:pointer;transition:background .15s}
-.agent-card:hover{background:var(--md-surface-container-high)}
-.agent-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.agent-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.agent-name{font-size:12px;font-weight:600;line-height:1.3}
-.agent-role{font-size:10px;color:var(--md-on-surface-variant);line-height:1.3}
-.agent-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.tag{background:var(--md-surface-container-highest);border-radius:6px;padding:2px 7px;font-size:10px;color:var(--md-on-surface-variant)}
-.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.sdot.online{background:#4CAF50} .sdot.scheduled{background:#FFB74D} .sdot.idle{background:#666}
-.task-count{margin-left:auto;background:var(--md-primary-container);color:var(--md-on-primary-container);border-radius:10px;padding:2px 8px;font-size:10px;font-weight:700}
+/* SIDEBAR */
+.aside{width:190px;border-right:1px solid var(--out-v);background:var(--sur-c);flex-shrink:0;overflow-y:auto;padding:8px 5px;display:flex;flex-direction:column;gap:1px}
+.abtn{display:flex;align-items:center;gap:7px;padding:8px 9px;border-radius:var(--r-m);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:background .15s}
+.abtn:hover{background:rgba(103,80,164,.08)}
+.abtn.on{background:var(--pri-c)}
+.abtn.on .aname{color:var(--on-pri-c);font-weight:700}
+.aico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.aname{font-size:11px;font-weight:500;color:var(--on-sur);line-height:1.2}
+.asched{font-size:10px;color:var(--on-sur-v)}
 
-/* ASSIGN PANEL */
-.assign-panel{background:var(--md-primary-container);border-radius:var(--md-shape-xl);padding:20px;margin-bottom:20px}
-.assign-panel h2{font-size:15px;font-weight:600;color:var(--md-on-primary-container);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.assign-panel h2 .material-icons{font-size:20px}
-.fld{display:flex;flex-direction:column;gap:4px}
-.fld label{font-size:11px;color:var(--md-on-primary-container);opacity:.8;font-weight:500}
-.fld input,.fld textarea,.fld select{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:var(--md-shape-s);padding:9px 12px;color:var(--md-on-primary-container);font-family:inherit;font-size:13px;outline:none;transition:border .2s}
-.fld input::placeholder,.fld textarea::placeholder{color:rgba(234,221,255,.5)}
-.fld input:focus,.fld textarea:focus,.fld select:focus{border-color:rgba(255,255,255,.6)}
-.fld textarea{resize:vertical;min-height:64px}
-.fld select option{background:var(--md-surface-container);color:var(--md-on-surface)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-grid{display:grid;gap:12px}
-.btn{border:none;border-radius:var(--md-shape-xl);padding:10px 20px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.btn .material-icons{font-size:18px}
-.btn-primary{background:var(--md-primary);color:var(--md-on-primary)}
-.btn-primary:hover{filter:brightness(1.1)}
-.btn-tonal{background:var(--md-secondary-container);color:var(--md-on-secondary-container)}
-.btn-text{background:transparent;color:var(--md-primary);padding:8px 12px}
-.btn-sm{padding:6px 14px;font-size:12px}
+/* CHAT */
+.chat-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#fff}
+.chat-hdr{padding:10px 14px;border-bottom:1px solid var(--out-v);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.chat-hdr-ico{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.chat-nm{font-size:13px;font-weight:600}
+.chat-rl{font-size:11px;color:var(--on-sur-v)}
+.msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.msg-row{display:flex;flex-direction:column}
+.msg-row.u{align-items:flex-end}
+.msg-row.a{align-items:flex-start}
+.bubble{padding:9px 12px;border-radius:var(--r-l);font-size:13px;line-height:1.65;white-space:pre-wrap;max-width:85%}
+.msg-row.a .bubble{background:var(--sur-c);border-radius:4px var(--r-l) var(--r-l) var(--r-l);color:var(--on-sur)}
+.msg-row.u .bubble{background:var(--pri);color:#fff;border-radius:var(--r-l) 4px var(--r-l) var(--r-l)}
+.mt{font-size:10px;color:var(--on-sur-v);margin-top:3px;padding:0 4px}
+.dots{display:flex;gap:4px;align-items:center;padding:10px 12px;background:var(--sur-c);border-radius:4px var(--r-l) var(--r-l) var(--r-l)}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--out);animation:dt .9s infinite}
+.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes dt{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--on-sur-v);padding:20px}
+.chat-empty .big{font-size:42px}
+.chat-empty p{font-size:12px;text-align:center;max-width:200px;line-height:1.5}
+.qps{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:6px}
+.qp{background:var(--sur-c);border:1px solid var(--out-v);border-radius:20px;padding:5px 10px;font-size:11px;cursor:pointer;color:var(--on-sur-v);transition:all .15s}
+.qp:hover{background:var(--pri-c);color:var(--on-pri-c);border-color:transparent}
+.inp-area{padding:9px 12px;border-top:1px solid var(--out-v);display:flex;gap:8px;align-items:flex-end;flex-shrink:0;background:#fff}
+.inp{flex:1;background:var(--sur-c);border:1px solid var(--out-v);border-radius:var(--r-l);padding:8px 12px;font-family:inherit;font-size:13px;color:var(--on-sur);resize:none;outline:none;max-height:110px;line-height:1.5;transition:border .2s}
+.inp:focus{border-color:var(--pri);background:#fff}
+.send{width:36px;height:36px;border-radius:50%;background:var(--pri);border:none;cursor:pointer;color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:filter .2s}
+.send:hover{filter:brightness(1.1)}
+.send:disabled{background:var(--sur-ch);cursor:default;color:var(--out)}
 
-/* FILTERS */
-.task-filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.fchip{background:var(--md-surface-container-high);border:1px solid var(--md-outline-variant);border-radius:20px;padding:5px 13px;font-size:12px;cursor:pointer;color:var(--md-on-surface-variant);transition:all .2s}
-.fchip.active{background:var(--md-secondary-container);border-color:var(--md-secondary-container);color:var(--md-on-secondary-container)}
+/* DASHBOARD */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.metric{background:var(--sur-c);border-radius:var(--r-l);padding:12px 14px;border:1px solid var(--out-v)}
+.mv{font-size:24px;font-weight:700;color:var(--pri)}
+.ml{font-size:11px;color:var(--on-sur-v);margin-top:2px}
+.sec{font-size:11px;font-weight:600;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;margin-top:2px}
+.ag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+.agc{background:var(--sur-c);border-radius:var(--r-l);padding:11px 12px;border:1px solid var(--out-v);border-left:3px solid;cursor:pointer;transition:box-shadow .15s}
+.agc:hover{box-shadow:var(--sh2)}
+.agh{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.agav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.agnm{font-size:11px;font-weight:600;line-height:1.2}
+.agrl{font-size:10px;color:var(--on-sur-v)}
+.agmt{display:flex;align-items:center;gap:4px}
+.tag{background:var(--sur-ch);border-radius:5px;padding:2px 6px;font-size:10px;color:var(--on-sur-v)}
+.sdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sdot.sched{background:#FF9800}.sdot.idle{background:#9E9E9E}
+.tc{margin-left:auto;background:var(--pri-c);color:var(--on-pri-c);border-radius:8px;padding:1px 5px;font-size:10px;font-weight:700}
+
+/* ALERT */
+.alert{background:var(--err-c);border-radius:var(--r-m);padding:10px 12px;margin-bottom:8px;display:flex;gap:8px;align-items:flex-start;border:1px solid rgba(179,38,30,.2);font-size:12px}
+.alert-ico{font-size:16px;flex-shrink:0}
+.alert-ok{background:var(--ok-c);border-color:rgba(46,125,50,.2)}
+
+/* TASKS */
+.ap{background:var(--pri-c);border-radius:var(--r-xl);padding:14px;margin-bottom:14px}
+.ap h2{font-size:13px;font-weight:700;color:var(--on-pri-c);margin-bottom:10px}
+.fg{display:grid;gap:8px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld label{font-size:11px;font-weight:500;color:var(--on-pri-c);opacity:.8}
+.fld input,.fld textarea,.fld select{background:rgba(255,255,255,.65);border:1px solid rgba(103,80,164,.25);border-radius:var(--r-s);padding:7px 10px;font-family:inherit;font-size:12px;color:var(--on-sur);outline:none}
+.fld input:focus,.fld textarea:focus,.fld select:focus{background:#fff;border-color:var(--pri)}
+.fld textarea{resize:vertical;min-height:52px}
+.fld-plain label{font-size:11px;font-weight:500;color:var(--on-sur-v)}
+.fld-plain input,.fld-plain textarea,.fld-plain select{background:var(--sur-c);border:1px solid var(--out-v);border-radius:var(--r-s);padding:7px 10px;font-family:inherit;font-size:12px;color:var(--on-sur);outline:none;width:100%}
+.fld-plain input:focus,.fld-plain textarea:focus,.fld-plain select:focus{border-color:var(--pri)}
+.btn{border:none;border-radius:var(--r-xl);padding:7px 15px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.btn-pri{background:var(--pri);color:#fff}.btn-pri:hover{filter:brightness(1.08)}
+.btn-ton{background:var(--sec-c);color:var(--on-sec-c)}
+.btn-txt{background:none;color:var(--pri)}
+.btn-sm{padding:4px 11px;font-size:11px}
+.btn-grn{background:#2E7D32;color:#fff}
+.fchips{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.fc{background:var(--sur-c);border:1px solid var(--out-v);border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--on-sur-v);transition:all .15s}
+.fc.on{background:var(--sec-c);border-color:var(--sec-c);color:var(--on-sec-c)}
 
 /* TASK ITEMS */
-.task-item{background:var(--md-surface-container);border-radius:var(--md-shape-m);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;border-left:3px solid transparent;transition:background .15s}
-.task-item:hover{background:var(--md-surface-container-high)}
-.task-item.ph{border-left-color:#F44336} .task-item.pm{border-left-color:#FF9800} .task-item.pl{border-left-color:#4CAF50}
-.task-item.done{opacity:.45} .task-item.done .task-title{text-decoration:line-through}
-.tcheck{width:20px;height:20px;border-radius:6px;border:2px solid var(--md-outline);cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:12px}
-.tcheck.on{background:var(--md-primary);border-color:var(--md-primary);color:var(--md-on-primary)}
-.tbody{flex:1;min-width:0}
-.task-title{font-size:13px;font-weight:500;margin-bottom:3px}
-.task-desc{font-size:11px;color:var(--md-on-surface-variant);margin-bottom:5px;line-height:1.5}
-.task-foot{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.atag{border-radius:6px;padding:2px 8px;font-size:10px;font-weight:600}
-.ddate{font-size:10px;color:var(--md-on-surface-variant);display:flex;align-items:center;gap:2px}
-.ddate.ov{color:#F44336}
-.ddate .material-icons{font-size:12px}
-.iBtn{background:none;border:none;cursor:pointer;color:var(--md-on-surface-variant);padding:4px;border-radius:6px;display:flex;align-items:center;font-size:18px;transition:background .15s;margin-left:auto}
-.iBtn:hover{background:var(--md-surface-container-highest)}
-.empty{text-align:center;padding:40px 24px;color:var(--md-on-surface-variant)}
-.empty .material-icons{font-size:44px;margin-bottom:10px;opacity:.3;display:block}
+.ti{background:#fff;border-radius:var(--r-m);padding:9px 11px;margin-bottom:5px;display:flex;align-items:flex-start;gap:8px;border:1px solid var(--out-v);border-left:3px solid transparent;transition:box-shadow .15s}
+.ti:hover{box-shadow:var(--sh1)}
+.ti.ph{border-left-color:#F44336}.ti.pm{border-left-color:#FF9800}.ti.pl{border-left-color:#4CAF50}
+.ti.done{opacity:.4}.ti.done .ttl{text-decoration:line-through}
+.chk{width:17px;height:17px;border-radius:5px;border:2px solid var(--out);cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;transition:all .15s}
+.chk.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.tb{flex:1;min-width:0}
+.ttl{font-size:13px;font-weight:500;margin-bottom:2px}
+.tdsc{font-size:11px;color:var(--on-sur-v);margin-bottom:4px;line-height:1.4}
+.tft{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.atag{border-radius:5px;padding:1px 6px;font-size:10px;font-weight:600}
+.ddt{font-size:10px;color:var(--on-sur-v)}.ddt.ov{color:var(--err)}
+.ibtn{background:none;border:none;cursor:pointer;color:var(--on-sur-v);padding:3px;border-radius:5px;font-size:13px;line-height:1;margin-left:auto;transition:background .15s;flex-shrink:0}
+.ibtn:hover{background:var(--sur-ch)}
+.empty{text-align:center;padding:28px 14px;color:var(--on-sur-v);font-size:12px}
 
 /* CONTRACTS */
-.pay-alert{background:var(--md-error-container);border-radius:var(--md-shape-m);padding:11px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;font-size:13px}
-.pay-alert .material-icons{color:var(--md-error);flex-shrink:0}
-.con-item{background:var(--md-surface-container);border-radius:var(--md-shape-m);padding:13px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:start;gap:12px}
-.con-name{font-size:13px;font-weight:600;margin-bottom:3px}
-.con-meta{font-size:11px;color:var(--md-on-surface-variant);line-height:1.7}
-.con-amt{font-size:17px;font-weight:700;color:var(--md-primary);text-align:right;white-space:nowrap}
-.con-next{font-size:10px;color:var(--md-on-surface-variant);text-align:right;margin-top:2px}
+.ci{background:#fff;border-radius:var(--r-m);padding:11px 13px;margin-bottom:6px;display:flex;justify-content:space-between;gap:10px;border:1px solid var(--out-v)}
+.ci.expired{opacity:.5;border-style:dashed}
+.cn{font-size:13px;font-weight:600;margin-bottom:2px}
+.cm{font-size:11px;color:var(--on-sur-v);line-height:1.6}
+.ca{font-size:15px;font-weight:700;color:var(--pri);white-space:nowrap;text-align:right}
+.cper{font-size:10px;color:var(--on-sur-v);text-align:right}
+
+/* FINANCE */
+.fin-calc{background:linear-gradient(135deg,#E3F2FD,#EDE7F6);border-radius:var(--r-xl);padding:16px;margin-bottom:14px;border:1px solid #BBDEFB}
+.fin-calc h2{font-size:13px;font-weight:700;color:#1565C0;margin-bottom:12px}
+.fin-result{background:#fff;border-radius:var(--r-l);padding:12px 14px;margin-top:10px;display:none}
+.fin-amount{font-size:28px;font-weight:700;color:#1565C0}
+.fin-label{font-size:11px;color:var(--on-sur-v);margin-top:2px}
+.budget-bar{height:8px;background:var(--sur-ch);border-radius:4px;margin:8px 0;overflow:hidden}
+.budget-fill{height:100%;background:linear-gradient(90deg,#6750A4,#9C27B0);border-radius:4px;transition:width .5s}
+.pay-item{background:#fff;border-radius:var(--r-m);padding:10px 12px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--out-v)}
+.pay-nm{font-size:13px;font-weight:500}
+.pay-dt{font-size:11px;color:var(--on-sur-v);margin-top:2px}
+.pay-amt{font-size:15px;font-weight:700;color:#1565C0}
+
+/* ACT MODAL */
+.act-text{background:var(--sur-c);border:1px solid var(--out-v);border-radius:var(--r-m);padding:12px;font-family:monospace;font-size:11px;line-height:1.8;white-space:pre-wrap;max-height:340px;overflow-y:auto;color:var(--on-sur);margin:10px 0}
+
+/* EVENTS */
+.ev-item{background:#fff;border-radius:var(--r-l);padding:12px 14px;margin-bottom:8px;border:1px solid var(--out-v);border-left:4px solid}
+.ev-item.planning{border-left-color:#FF9800}
+.ev-item.ready{border-left-color:#4CAF50}
+.ev-item.done{border-left-color:#9E9E9E;opacity:.6}
+.ev-item.urgent{border-left-color:#F44336}
+.ev-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.ev-nm{font-size:13px;font-weight:600}
+.ev-date{font-size:11px;color:var(--on-sur-v);margin-top:2px}
+.ev-status{padding:3px 8px;border-radius:8px;font-size:10px;font-weight:700}
+.ev-status.planning{background:#FFF3E0;color:#E65100}
+.ev-status.ready{background:#E8F5E9;color:#1B5E20}
+.ev-status.done{background:var(--sur-ch);color:var(--on-sur-v)}
+.ev-status.urgent{background:var(--err-c);color:var(--err)}
+.ev-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--on-sur-v);margin-bottom:8px}
+.ev-checklist{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.ev-check{display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer}
+.ev-check input[type=checkbox]{width:14px;height:14px;accent-color:var(--pri)}
+.ev-check.checked{color:var(--on-sur-v);text-decoration:line-through}
+
+/* MEMBERS */
+.section-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
+.section-card{background:#fff;border-radius:var(--r-l);padding:12px;border:1px solid var(--out-v);text-align:center;cursor:pointer;transition:box-shadow .15s}
+.section-card:hover{box-shadow:var(--sh2)}
+.section-ico{font-size:24px;margin-bottom:6px}
+.section-nm{font-size:12px;font-weight:600;margin-bottom:4px}
+.section-cnt{font-size:22px;font-weight:700;color:var(--pri)}
+.section-bar{height:4px;background:var(--sur-ch);border-radius:2px;margin-top:8px;overflow:hidden}
+.section-fill{height:100%;background:var(--pri);border-radius:2px}
+.member-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.mstat{background:var(--sur-c);border-radius:var(--r-l);padding:12px;text-align:center;border:1px solid var(--out-v)}
+.mstat-val{font-size:22px;font-weight:700;color:var(--pri)}
+.mstat-lbl{font-size:10px;color:var(--on-sur-v);margin-top:2px}
 
 /* SMM */
-.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:18px}
-.wday{background:var(--md-surface-container-high);border-radius:var(--md-shape-s);padding:8px 4px;text-align:center}
-.wday.today{background:var(--md-primary-container);color:var(--md-on-primary-container)}
-.wday.haspost{background:var(--md-tertiary-container)}
-.wday-n{font-size:9px;color:var(--md-on-surface-variant);text-transform:uppercase;margin-bottom:3px}
-.wday-d{font-size:15px;font-weight:600}
-.wday-dot{width:5px;height:5px;border-radius:50%;background:var(--md-on-tertiary-container);margin:4px auto 0;display:none}
-.wday.haspost .wday-dot{display:block}
-.post-card{background:var(--md-surface-container);border-radius:var(--md-shape-l);padding:14px 16px;margin-bottom:10px;border-left:3px solid var(--agent-smm)}
-.post-topic{font-size:10px;font-weight:700;color:var(--agent-smm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-.post-title{font-size:14px;font-weight:600;margin-bottom:6px}
-.post-prev{font-size:12px;color:var(--md-on-surface-variant);line-height:1.6}
-.post-foot{display:flex;align-items:center;gap:8px;margin-top:10px}
+.wg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px}
+.wd{background:var(--sur-c);border-radius:var(--r-s);padding:6px 2px;text-align:center;border:1px solid var(--out-v)}
+.wd.today{background:var(--pri-c);border-color:var(--pri)}
+.wd.hp{background:var(--ter-c)}
+.wdn{font-size:8px;color:var(--on-sur-v);text-transform:uppercase;margin-bottom:2px}
+.wdd{font-size:13px;font-weight:600}
+.wdot{width:4px;height:4px;border-radius:50%;background:#6A1B9A;margin:2px auto 0;display:none}
+.wd.hp .wdot{display:block}
+.pc{background:#fff;border-radius:var(--r-l);padding:12px 14px;margin-bottom:7px;border:1px solid var(--out-v);border-left:3px solid var(--c-smm)}
+.ptop{font-size:10px;font-weight:700;color:var(--c-smm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.ptitle{font-size:13px;font-weight:600;margin-bottom:3px}
+.pprev{font-size:11px;color:var(--on-sur-v);line-height:1.6}
+.pft{display:flex;align-items:center;gap:6px;margin-top:7px}
 
 /* MEMORY */
-.mem-ta{width:100%;background:var(--md-surface-container-high);border:1px solid var(--md-outline-variant);border-radius:var(--md-shape-m);padding:13px;color:var(--md-on-surface);font-family:'Google Sans Mono',monospace;font-size:12px;line-height:1.7;resize:vertical;min-height:160px;outline:none}
-.mem-ta:focus{border-color:var(--md-primary)}
+.mta{width:100%;background:var(--sur-c);border:1px solid var(--out-v);border-radius:var(--r-m);padding:10px;font-family:monospace;font-size:11px;line-height:1.7;resize:vertical;min-height:130px;outline:none;color:var(--on-sur)}
+.mta:focus{border-color:var(--pri)}
 
-/* LOG */
-.log-row{padding:8px 0;border-bottom:1px solid var(--md-outline-variant);display:flex;gap:10px;font-size:12px;align-items:baseline}
-.log-t{color:var(--md-on-surface-variant);font-family:'Google Sans Mono',monospace;flex-shrink:0;width:50px}
+/* CARD */
+.card{background:var(--sur-c);border-radius:var(--r-l);padding:14px;margin-bottom:10px;border:1px solid var(--out-v)}
 
 /* MODAL */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:200}
-.overlay.open{display:flex}
-.modal{background:var(--md-surface-container);border-radius:var(--md-shape-xl);padding:22px;width:460px;max-width:94vw;max-height:82vh;overflow-y:auto}
-.modal h2{font-size:16px;font-weight:600;margin-bottom:18px;display:flex;align-items:center;gap:8px}
-.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-.modal .fld input,.modal .fld textarea,.modal .fld select{background:var(--md-surface-container-high);border:1px solid var(--md-outline-variant);color:var(--md-on-surface)}
-.modal .fld input:focus,.modal .fld textarea:focus,.modal .fld select:focus{border-color:var(--md-primary)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:200}
+.ov.open{display:flex}
+.modal{background:#fff;border-radius:var(--r-xl);padding:18px;width:440px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.modal h2{font-size:14px;font-weight:700;margin-bottom:12px}
+.modal .fld-plain input,.modal .fld-plain textarea,.modal .fld-plain select{background:var(--sur-c);border:1px solid var(--out-v)}
+.mft{display:flex;justify-content:flex-end;gap:7px;margin-top:12px}
 
-/* FAB */
-.fab{position:fixed;bottom:22px;right:22px;background:var(--md-primary-container);color:var(--md-on-primary-container);border:none;border-radius:16px;padding:13px 20px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:var(--md-elev2);z-index:50;transition:filter .2s}
-.fab:hover{filter:brightness(1.1)}
-.fab .material-icons{font-size:20px}
-
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-thumb{background:var(--md-outline-variant);border-radius:3px}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--out-v);border-radius:2px}
 </style>
 </head>
 <body>
 
-<!-- NAV RAIL -->
-<nav class="nav-rail">
-  <div class="nav-logo">🤖</div>
-  <div class="nav-item active" onclick="gv('dashboard',this)">
-    <div class="nav-pill"><span class="material-icons">dashboard</span></div>
-    <span class="nav-label">Главная</span>
-  </div>
-  <div class="nav-item" onclick="gv('tasks',this)" id="nav-tasks">
-    <div class="nav-pill"><span class="material-icons">assignment</span></div>
-    <span class="nav-label">Поручения</span>
-    <span class="nav-badge" id="badge-t">0</span>
-  </div>
-  <div class="nav-item" onclick="gv('contracts',this)">
-    <div class="nav-pill"><span class="material-icons">description</span></div>
-    <span class="nav-label">Договоры</span>
-    <span class="nav-badge" id="badge-c">!</span>
-  </div>
-  <div class="nav-item" onclick="gv('smm',this)">
-    <div class="nav-pill"><span class="material-icons">campaign</span></div>
-    <span class="nav-label">SMM</span>
-  </div>
-  <div class="nav-item" onclick="gv('memory',this)">
-    <div class="nav-pill"><span class="material-icons">psychology</span></div>
-    <span class="nav-label">Память</span>
-  </div>
-  <div class="nav-item" onclick="gv('log',this)">
-    <div class="nav-pill"><span class="material-icons">history</span></div>
-    <span class="nav-label">Журнал</span>
-  </div>
-</nav>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="top-bar">
-    <h1 id="vtitle">Командный центр · НИИЖТ</h1>
-    <div class="chip"><span class="pulse"></span><span id="clock">--:--</span></div>
-    <div class="chip"><span class="material-icons" style="font-size:14px">account_circle</span>Иван</div>
-  </div>
-  <div class="content">
-
-    <!-- ══ ГЛАВНАЯ ══ -->
-    <div class="view active" id="view-dashboard">
-      <div class="grid-3" style="margin-bottom:20px">
-        <div class="metric"><div class="metric-val" id="m-tasks">0</div><div class="metric-lbl">Активных задач</div></div>
-        <div class="metric"><div class="metric-val">7</div><div class="metric-lbl">Агентов в команде</div></div>
-        <div class="metric"><div class="metric-val" id="m-pay">0</div><div class="metric-lbl">Выплат на неделе</div></div>
-      </div>
-      <div class="sec-title">Команда агентов</div>
-      <div class="agents-grid" id="agents-grid"></div>
-      <div class="sec-title">Срочные задачи</div>
-      <div id="urgent-list"></div>
-    </div>
-
-    <!-- ══ ПОРУЧЕНИЯ ══ -->
-    <div class="view" id="view-tasks">
-      <div class="assign-panel">
-        <h2><span class="material-icons">add_task</span>Выдать поручение агенту</h2>
-        <div class="form-grid">
-          <div class="form-row">
-            <div class="fld"><label>Агент</label>
-              <select id="ta-agent">
-                <option value="dispatch">📋 Диспетчер задач</option>
-                <option value="contract">📄 Контролёр договоров</option>
-                <option value="smm">📱 SMM-редактор</option>
-                <option value="memory">🧠 Агент памяти</option>
-                <option value="browser">🌐 Браузер-агент</option>
-                <option value="automation">⚙️ Агент автоматизации</option>
-                <option value="research">🔍 Агент исследований</option>
-              </select>
-            </div>
-            <div class="fld"><label>Приоритет</label>
-              <select id="ta-prior">
-                <option value="h">🔴 Высокий</option>
-                <option value="m" selected>🟡 Средний</option>
-                <option value="l">🟢 Низкий</option>
-              </select>
-            </div>
-          </div>
-          <div class="fld"><label>Название задачи</label>
-            <input id="ta-title" type="text" placeholder="Что нужно сделать?">
-          </div>
-          <div class="fld"><label>Описание / детали</label>
-            <textarea id="ta-desc" placeholder="Подробности, данные, формат результата..."></textarea>
-          </div>
-          <div class="form-row">
-            <div class="fld"><label>Срок выполнения</label><input id="ta-dead" type="date"></div>
-            <div class="fld" style="justify-content:flex-end;padding-top:18px">
-              <button class="btn btn-primary" onclick="addTask()"><span class="material-icons">send</span>Назначить</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="task-filters" id="tfilters">
-        <div class="fchip active" onclick="filt('all',this)">Все</div>
-        <div class="fchip" onclick="filt('active',this)">Активные</div>
-        <div class="fchip" onclick="filt('done',this)">Выполнено</div>
-        <div class="fchip" onclick="filt('h',this)">🔴 Срочные</div>
-        <div class="fchip" onclick="filt('dispatch',this)">Диспетчер</div>
-        <div class="fchip" onclick="filt('contract',this)">Договоры</div>
-        <div class="fchip" onclick="filt('smm',this)">SMM</div>
-      </div>
-      <div id="task-list"></div>
-    </div>
-
-    <!-- ══ ДОГОВОРЫ ══ -->
-    <div class="view" id="view-contracts">
-      <div id="pay-alerts"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div class="sec-title" style="margin:0">Договоры с тренерами</div>
-        <button class="btn btn-tonal btn-sm" onclick="openM('mc')"><span class="material-icons" style="font-size:16px">add</span>Добавить</button>
-      </div>
-      <div id="con-list"></div>
-      <div class="card" style="margin-top:18px">
-        <div class="sec-title">Ближайшие выплаты (30 дней)</div>
-        <div id="pay-timeline"></div>
-      </div>
-    </div>
-
-    <!-- ══ SMM ══ -->
-    <div class="view" id="view-smm">
-      <div class="card">
-        <div class="sec-title">Неделя <span id="wnum"></span> · Тема: <span id="wtheme" style="color:var(--agent-smm)"></span></div>
-        <div class="week-grid" id="wgrid"></div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div class="sec-title" style="margin:0">Подготовленные посты</div>
-        <button class="btn btn-tonal btn-sm" onclick="openM('mp')"><span class="material-icons" style="font-size:16px">add</span>Новый пост</button>
-      </div>
-      <div id="post-list"></div>
-    </div>
-
-    <!-- ══ ПАМЯТЬ ══ -->
-    <div class="view" id="view-memory">
-      <div class="card">
-        <div class="sec-title">Контекст — кто я, моя должность, цели</div>
-        <textarea class="mem-ta" id="mem-context"></textarea>
-        <button class="btn btn-tonal btn-sm" style="margin-top:10px" onclick="saveMem('context')">Сохранить</button>
-      </div>
-      <div class="card">
-        <div class="sec-title">Активные проекты и статус</div>
-        <textarea class="mem-ta" id="mem-projects"></textarea>
-        <button class="btn btn-tonal btn-sm" style="margin-top:10px" onclick="saveMem('projects')">Сохранить</button>
-      </div>
-      <div class="card">
-        <div class="sec-title">Важные решения</div>
-        <textarea class="mem-ta" id="mem-decisions"></textarea>
-        <button class="btn btn-tonal btn-sm" style="margin-top:10px" onclick="saveMem('decisions')">Сохранить</button>
-      </div>
-    </div>
-
-    <!-- ══ ЖУРНАЛ ══ -->
-    <div class="view" id="view-log">
-      <div class="card">
-        <div class="sec-title">История действий</div>
-        <div id="log-list"></div>
-      </div>
-    </div>
-
-  </div>
+<div class="topbar">
+  <div class="tlogo">🤖</div>
+  <div><div class="ttitle">AI Command Center · ВНИИЖТ</div><div class="tsub">ФСК «Локомотив-ВНИИЖТ» · Спортивный отдел</div></div>
+  <div style="flex:1"></div>
+  <div class="chip"><span class="live-dot"></span><span id="clock">--:--</span></div>
+  <div class="chip">👤 Иван</div>
 </div>
 
-<!-- FAB -->
-<button class="fab" onclick="gv('tasks',document.querySelectorAll('.nav-item')[1]);setTimeout(()=>document.getElementById('ta-title').focus(),100)">
-  <span class="material-icons">add_task</span>Новое поручение
-</button>
+<div class="tabs">
+  <div class="tab active" onclick="gv('dash',this)">🏠 Главная</div>
+  <div class="tab" onclick="gv('chat',this)">💬 Чат с агентами</div>
+  <div class="tab" onclick="gv('tasks',this)">📋 Задачи</div>
+  <div class="tab" onclick="gv('contracts',this)">📄 Договоры</div>
+  <div class="tab" onclick="gv('finance',this)">💰 Финансы</div>
+  <div class="tab" onclick="gv('events',this)">🗓️ Мероприятия</div>
+  <div class="tab" onclick="gv('members',this)">👥 Члены клуба</div>
+  <div class="tab" onclick="gv('smm',this)">📣 SMM</div>
+  <div class="tab" onclick="gv('memory',this)">🧠 Память</div>
+</div>
 
-<!-- MODAL: ДОГОВОР -->
-<div class="overlay" id="mc">
-  <div class="modal">
-    <h2><span class="material-icons">description</span>Новый договор с тренером</h2>
-    <div class="form-grid" style="gap:11px">
-      <div class="fld"><label>ФИО тренера</label><input id="cn" type="text" placeholder="Иванов Иван Иванович"></div>
-      <div class="form-row">
-        <div class="fld"><label>Начало договора</label><input id="cs" type="date"></div>
-        <div class="fld"><label>Окончание договора</label><input id="ce" type="date"></div>
-      </div>
-      <div class="form-row">
-        <div class="fld"><label>Сумма (₽)</label><input id="ca" type="number" placeholder="15000"></div>
-        <div class="fld"><label>Периодичность</label>
-          <select id="cp"><option value="monthly">Ежемесячно</option><option value="biweekly">Раз в 2 недели</option><option value="weekly">Еженедельно</option><option value="once">Разово</option></select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="fld"><label>День выплаты (число)</label><input id="cd" type="number" min="1" max="31" placeholder="5"></div>
-        <div class="fld"><label>Секция / вид спорта</label><input id="csport" type="text" placeholder="Волейбол"></div>
+<div class="content">
+
+<!-- ═══ ГЛАВНАЯ ═══ -->
+<div class="view active" id="view-dash">
+  <div class="metrics">
+    <div class="metric"><div class="mv" id="m-t">0</div><div class="ml">Активных задач</div></div>
+    <div class="metric"><div class="mv" id="m-ag">11</div><div class="ml">Агентов</div></div>
+    <div class="metric"><div class="mv" id="m-p">0</div><div class="ml">Выплат на неделе</div></div>
+    <div class="metric"><div class="mv">219</div><div class="ml">Членов клуба</div></div>
+  </div>
+  <div id="dash-alerts"></div>
+  <div class="sec">Команда агентов</div>
+  <div class="ag-grid" id="ag-grid"></div>
+  <div class="sec">Срочные задачи</div>
+  <div id="urgent"></div>
+</div>
+
+<!-- ═══ ЧАТ ═══ -->
+<div class="view" id="view-chat">
+  <div class="aside" id="aside"></div>
+  <div class="chat-wrap">
+    <div class="chat-hdr">
+      <div class="chat-hdr-ico" id="ch-ico" style="background:#EDE7F6">💬</div>
+      <div><div class="chat-nm" id="ch-nm">Выберите агента</div><div class="chat-rl" id="ch-rl">Нажмите на агента слева</div></div>
+      <div style="flex:1"></div>
+      <button class="btn btn-ton btn-sm" onclick="clearChat()">Очистить</button>
+    </div>
+    <div class="msgs" id="msgs">
+      <div class="chat-empty" id="ce">
+        <span class="big">🤖</span>
+        <p>Выберите агента и начните диалог</p>
+        <div class="qps" id="qps"></div>
       </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-text" onclick="closeM('mc')">Отмена</button>
-      <button class="btn btn-primary" onclick="saveCon()">Сохранить</button>
+    <div class="inp-area">
+      <textarea class="inp" id="inp" placeholder="Напишите задачу или вопрос..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px'"></textarea>
+      <button class="send" id="sbtn" onclick="send()">➤</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: ПОСТ -->
-<div class="overlay" id="mp">
-  <div class="modal">
-    <h2><span class="material-icons">campaign</span>Новый SMM-пост</h2>
-    <div class="form-grid" style="gap:11px">
-      <div class="form-row">
-        <div class="fld"><label>Тема</label>
-          <select id="ptopic"><option value="activity">🏃 Физактивность</option><option value="nutrition">🥗 Питание</option><option value="sleep">😴 Восстановление</option><option value="mental">🧠 Ментальное здоровье</option><option value="event">🏆 Мероприятие</option></select>
+<!-- ═══ ЗАДАЧИ ═══ -->
+<div class="view" id="view-tasks">
+  <div class="ap">
+    <h2>📌 Выдать поручение</h2>
+    <div class="fg">
+      <div class="fr">
+        <div class="fld"><label>Агент</label>
+          <select id="ta-ag">
+            <option value="dispatch">📋 Диспетчер</option>
+            <option value="contract">📄 Контролёр договоров</option>
+            <option value="finance">💰 Финансовый агент</option>
+            <option value="smm">📣 SMM-редактор</option>
+            <option value="hr">👥 Кадровый агент</option>
+            <option value="report">📊 Отчётный агент</option>
+            <option value="law">⚖️ Нормативный агент</option>
+            <option value="memory">🧠 Агент памяти</option>
+            <option value="browser">🌐 Браузер-агент</option>
+            <option value="automation">⚙️ Автоматизация</option>
+            <option value="research">🔍 Исследования</option>
+          </select>
         </div>
-        <div class="fld"><label>Дата публикации</label><input id="pdate" type="date"></div>
+        <div class="fld"><label>Приоритет</label>
+          <select id="ta-pr"><option value="h">🔴 Высокий</option><option value="m" selected>🟡 Средний</option><option value="l">🟢 Низкий</option></select>
+        </div>
       </div>
-      <div class="fld"><label>Заголовок</label><input id="ptitle" type="text" placeholder="Заголовок поста"></div>
-      <div class="fld"><label>Текст поста</label><textarea id="ptext" style="min-height:110px" placeholder="Текст для сайта..."></textarea></div>
+      <div class="fld"><label>Название</label><input id="ta-tl" type="text" placeholder="Что нужно сделать?"></div>
+      <div class="fld"><label>Описание</label><textarea id="ta-ds" placeholder="Детали..."></textarea></div>
+      <div class="fr">
+        <div class="fld"><label>Срок</label><input id="ta-dl" type="date"></div>
+        <div class="fld" style="justify-content:flex-end;padding-top:14px"><button class="btn btn-pri" onclick="addTask()">Назначить ➤</button></div>
+      </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-text" onclick="closeM('mp')">Отмена</button>
-      <button class="btn btn-primary" onclick="savePost()">Сохранить</button>
+  </div>
+  <div class="fchips">
+    <div class="fc on" onclick="tf('all',this)">Все</div>
+    <div class="fc" onclick="tf('active',this)">Активные</div>
+    <div class="fc" onclick="tf('done',this)">Готово</div>
+    <div class="fc" onclick="tf('h',this)">🔴 Срочные</div>
+    <div class="fc" onclick="tf('contract',this)">Договоры</div>
+    <div class="fc" onclick="tf('smm',this)">SMM</div>
+    <div class="fc" onclick="tf('finance',this)">Финансы</div>
+  </div>
+  <div id="tlist"></div>
+</div>
+
+<!-- ═══ ДОГОВОРЫ ═══ -->
+<div class="view" id="view-contracts">
+  <div id="pal"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div class="sec" style="margin:0">Договоры с тренерами</div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-ton btn-sm" onclick="openM('mact')">📜 Создать акт</button>
+      <button class="btn btn-ton btn-sm" onclick="openM('mc')">+ Добавить</button>
     </div>
+  </div>
+  <div id="clist"></div>
+  <div class="card" style="margin-top:12px">
+    <div class="sec">График ближайших выплат</div>
+    <div id="ptl"></div>
+  </div>
+</div>
+
+<!-- ═══ ФИНАНСЫ ═══ -->
+<div class="view" id="view-finance">
+  <div class="fin-calc">
+    <h2>💰 Калькулятор выплат тренерам</h2>
+    <div class="fg">
+      <div class="fr">
+        <div class="fld"><label>Тренер</label>
+          <select id="fc-trainer" onchange="calcFin()">
+            <option value="">— выберите —</option>
+          </select>
+        </div>
+        <div class="fld"><label>Месяц</label>
+          <input id="fc-month" type="month" onchange="calcFin()">
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fld"><label>Количество занятий</label>
+          <input id="fc-sessions" type="number" min="0" placeholder="0" oninput="calcFin()">
+        </div>
+        <div class="fld"><label>Часов за занятие</label>
+          <input id="fc-hours" type="number" min="0" step="0.5" placeholder="1" oninput="calcFin()">
+        </div>
+      </div>
+      <div class="fin-result" id="fin-result">
+        <div class="fin-amount" id="fin-amount">0 ₽</div>
+        <div class="fin-label" id="fin-label">к выплате</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn btn-pri btn-sm" onclick="savePayment()">💾 Записать выплату</button>
+          <button class="btn btn-ton btn-sm" onclick="openActModal()">📜 Создать акт</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="sec" style="margin:0">Бюджет года</div>
+      <span style="font-size:11px;color:var(--on-sur-v)">~800 000 ₽/год</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+      <span>Потрачено: <strong id="b-spent">0 ₽</strong></span>
+      <span>Остаток: <strong id="b-left">800 000 ₽</strong></span>
+    </div>
+    <div class="budget-bar"><div class="budget-fill" id="budget-fill" style="width:0%"></div></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div class="sec" style="margin:0">История выплат</div>
+    <button class="btn btn-txt btn-sm" onclick="clearPays()">Очистить</button>
+  </div>
+  <div id="pay-list"><div class="empty">Выплат пока нет. Воспользуйтесь калькулятором выше.</div></div>
+</div>
+
+<!-- ═══ МЕРОПРИЯТИЯ ═══ -->
+<div class="view" id="view-events">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div class="sec" style="margin:0">Мероприятия 2026</div>
+    <div style="display:flex;gap:6px">
+      <div class="fc on" onclick="evf('all',this)">Все</div>
+      <div class="fc" onclick="evf('planning',this)">В планировании</div>
+      <div class="fc" onclick="evf('ready',this)">Готово</div>
+      <div class="fc" onclick="evf('done',this)">Проведено</div>
+    </div>
+  </div>
+  <div id="ev-list"></div>
+</div>
+
+<!-- ═══ ЧЛЕНЫ КЛУБА ═══ -->
+<div class="view" id="view-members">
+  <div class="member-stats">
+    <div class="mstat"><div class="mstat-val">219</div><div class="mstat-lbl">Всего членов</div></div>
+    <div class="mstat"><div class="mstat-val">10</div><div class="mstat-lbl">Секций</div></div>
+    <div class="mstat"><div class="mstat-val" id="m-active-sec">10</div><div class="mstat-lbl">Активных секций</div></div>
+  </div>
+  <div class="sec">Секции по количеству участников</div>
+  <div class="section-grid" id="sections-grid"></div>
+  <div class="card">
+    <div class="sec">Информация об управлении</div>
+    <div style="font-size:12px;line-height:1.8;color:var(--on-sur-v)">
+      <div>👤 <strong>Председатель ФСК:</strong> Шатов И.О.</div>
+      <div>🏛️ <strong>Председатель ППО:</strong> Меньшиков А.А.</div>
+      <div>📍 <strong>Адрес:</strong> г. Москва, 3-я Мытищинская ул., д. 10 (спортивный ангар)</div>
+      <div>💰 <strong>Финансирование:</strong> АО ВНИИЖТ + ППО ВНИИЖТ (~800 000 руб/год)</div>
+      <div>📬 <strong>ТЕРПРОФЖЕЛ:</strong> terkom-rzd@mail.ru</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SMM ═══ -->
+<div class="view" id="view-smm">
+  <div class="card">
+    <div class="sec">Неделя <span id="wn"></span> · Тема: <span id="wth" style="color:var(--c-smm)"></span></div>
+    <div class="wg" id="wg"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div class="sec" style="margin:0">Посты</div>
+    <button class="btn btn-ton btn-sm" onclick="openM('mp')">+ Новый</button>
+  </div>
+  <div id="plist"></div>
+</div>
+
+<!-- ═══ ПАМЯТЬ ═══ -->
+<div class="view" id="view-memory">
+  <div class="card"><div class="sec">Кто я — роль, цели</div>
+    <textarea class="mta" id="mem-context"></textarea>
+    <button class="btn btn-ton btn-sm" style="margin-top:7px" onclick="smem('context')">Сохранить</button>
+  </div>
+  <div class="card"><div class="sec">Активные проекты</div>
+    <textarea class="mta" id="mem-projects"></textarea>
+    <button class="btn btn-ton btn-sm" style="margin-top:7px" onclick="smem('projects')">Сохранить</button>
+  </div>
+  <div class="card"><div class="sec">Важные решения</div>
+    <textarea class="mta" id="mem-decisions"></textarea>
+    <button class="btn btn-ton btn-sm" style="margin-top:7px" onclick="smem('decisions')">Сохранить</button>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<!-- ═══ MODALS ═══ -->
+<!-- Договор -->
+<div class="ov" id="mc">
+  <div class="modal">
+    <h2>📄 Новый договор</h2>
+    <div class="fg" style="gap:8px">
+      <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>ФИО тренера</label><input id="cn" type="text"></div>
+      <div class="fr">
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Начало</label><input id="cs" type="date"></div>
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Окончание</label><input id="ce2" type="date"></div>
+      </div>
+      <div class="fr">
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Ставка (₽/час)</label><input id="ca" type="number"></div>
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Секция</label><input id="csp" type="text"></div>
+      </div>
+      <div class="fr">
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>День выплаты</label><input id="cd" type="number" min="1" max="31"></div>
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Статус</label>
+          <select id="cst"><option value="active">✅ Активный</option><option value="expired">⚠️ Истёк</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="mft"><button class="btn btn-txt" onclick="closeM('mc')">Отмена</button><button class="btn btn-pri" onclick="saveCon()">Сохранить</button></div>
+  </div>
+</div>
+
+<!-- Акт -->
+<div class="ov" id="mact">
+  <div class="modal" style="width:520px">
+    <h2>📜 Генератор акта об оказании услуг</h2>
+    <div class="fg" style="gap:8px">
+      <div class="fr">
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Тренер</label>
+          <select id="act-trainer"></select>
+        </div>
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Месяц и год</label>
+          <input id="act-month" type="month">
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Кол-во занятий</label>
+          <input id="act-sessions" type="number" min="1" value="1" oninput="previewAct()">
+        </div>
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Часов за занятие</label>
+          <input id="act-hours" type="number" min="0.5" step="0.5" value="1" oninput="previewAct()">
+        </div>
+      </div>
+      <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Номер акта</label>
+        <input id="act-num" type="text" placeholder="1">
+      </div>
+      <div id="act-preview" style="display:none">
+        <div style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin-bottom:4px">Предпросмотр акта:</div>
+        <div class="act-text" id="act-text"></div>
+      </div>
+    </div>
+    <div class="mft">
+      <button class="btn btn-txt" onclick="closeM('mact')">Закрыть</button>
+      <button class="btn btn-ton btn-sm" onclick="previewAct()">👁️ Предпросмотр</button>
+      <button class="btn btn-pri btn-sm" onclick="copyAct()">📋 Скопировать акт</button>
+    </div>
+  </div>
+</div>
+
+<!-- Пост SMM -->
+<div class="ov" id="mp">
+  <div class="modal">
+    <h2>📣 SMM-пост</h2>
+    <div class="fg" style="gap:8px">
+      <div class="fr">
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Тема</label>
+          <select id="pt"><option value="activity">🏃 Физактивность</option><option value="nutrition">🥗 Питание</option><option value="sleep">😴 Восстановление</option><option value="mental">🧠 Ментальное</option><option value="event">🏆 Мероприятие</option></select>
+        </div>
+        <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Дата</label><input id="pd" type="date"></div>
+      </div>
+      <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Заголовок</label><input id="ph" type="text"></div>
+      <div class="fld-plain" style="display:flex;flex-direction:column;gap:3px"><label>Текст</label><textarea id="pb" style="min-height:90px"></textarea></div>
+    </div>
+    <div class="mft"><button class="btn btn-txt" onclick="closeM('mp')">Отмена</button><button class="btn btn-pri" onclick="savePost()">Сохранить</button></div>
   </div>
 </div>
 
 <script>
-// ─── AGENTS ───
+// ═══ AGENTS — 11 агентов ═══
 const AGENTS=[
-  {id:'dispatch',name:'Диспетчер задач',role:'Мониторинг почты и задач',sched:'Пн–Пт 8:00',ico:'📋',col:'var(--agent-dispatch)',st:'scheduled'},
-  {id:'contract',name:'Контролёр договоров',role:'Расчёт выплат тренерам',sched:'Пн 9:00',ico:'📄',col:'var(--agent-contract)',st:'scheduled'},
-  {id:'smm',name:'SMM-редактор',role:'Контент о ЗОЖ и мероприятиях',sched:'Ср 10:00',ico:'📱',col:'var(--agent-smm)',st:'scheduled'},
-  {id:'memory',name:'Агент памяти',role:'Сохраняет контекст сессий',sched:'По запросу',ico:'🧠',col:'var(--agent-memory)',st:'idle'},
-  {id:'browser',name:'Браузер-агент',role:'Работа в интернете',sched:'По запросу',ico:'🌐',col:'var(--agent-browser)',st:'idle'},
-  {id:'automation',name:'Агент автоматизации',role:'n8n интеграции и триггеры',sched:'По запросу',ico:'⚙️',col:'var(--agent-automation)',st:'idle'},
-  {id:'research',name:'Агент исследований',role:'Поиск и анализ данных',sched:'По запросу',ico:'🔍',col:'var(--agent-research)',st:'idle'},
+  {id:'dispatch',nm:'Диспетчер задач',rl:'Мониторинг задач и почты',sc:'Пн–Пт 8:00',ico:'📋',col:'var(--c-dis)',bg:'#E8EAF6',
+   p:`Ты — ИИ-ассистент Ивана, ведущего специалиста спортивной деятельности в ВНИИЖТ. Организация: ФСК «Локомотив-ВНИИЖТ», Москва. Помогаешь: планировать день, расставлять приоритеты, контролировать дедлайны, структурировать входящие запросы. Активные мероприятия: Спартакиада ТЕРПРОФЖЕЛ (II кв.), Первенство МЖД по волейболу, Кубок ВНИИЖТ по мини-футболу (III кв.). Отвечай конкретно, по-русски.`,
+   q:['Что важно сделать сегодня?','Помоги составить план на неделю','Как расставить приоритеты?']},
+  {id:'contract',nm:'Контролёр договоров',rl:'Контроль и расчёт выплат',sc:'Пн 9:00',ico:'📄',col:'var(--c-con)',bg:'#E8F5E9',
+   p:`Ты — специалист по договорам найма тренеров ФСК «Локомотив-ВНИИЖТ». Активные договоры: Громова В.С. (йога, до 30.12.2026, 4 000 ₽/час), Голикова Е.В. (ОФП, до 24.12.2026, 7 000 ₽/час). Истёкшие: Ермак Е.Н. (теннис, истёк 29.12.2025), Гордиенко С.А. (мини-футбол, истёк 30.10.2025). Выплаты: в течение 5 банк. дней после подписания акта. Договоры заключает ТЕРПРОФЖЕЛ МОСЖЕЛТРАНС (Сироткин С.М.). Помогаешь контролировать сроки, проверять договоры.`,
+   q:['Какие договоры истекают скоро?','Когда следующая выплата тренерам?','Что нужно для нового договора?']},
+  {id:'finance',nm:'Финансовый агент',rl:'Расчёт выплат и акты',sc:'По запросу',ico:'💰',col:'var(--c-fin)',bg:'#E3F2FD',
+   p:`Ты — финансовый ассистент ФСК «Локомотив-ВНИИЖТ». Знаешь ставки тренеров: Громова В.С. — 4 000 ₽/час (йога), Голикова Е.В. — 7 000 ₽/час (ОФП). Годовой бюджет: ~800 000 руб (АО ВНИИЖТ + ППО ВНИИЖТ). Выплаты производятся в течение 5 банковских дней после подписания акта. Помогаешь: рассчитать сумму выплат, составить акт об оказании услуг, контролировать бюджет, подготовить финансовый отчёт. Отвечай точно, с цифрами, по-русски.`,
+   q:['Сколько выплатить Громовой за 5 занятий?','Рассчитай выплаты за июнь','Помоги составить акт об оказании услуг']},
+  {id:'smm',nm:'SMM-редактор',rl:'Контент о ЗОЖ и мероприятиях',sc:'Ср 10:00',ico:'📣',col:'var(--c-smm)',bg:'#F3E5F5',
+   p:`Ты — редактор контента для ФСК «Локомотив-ВНИИЖТ». Пишешь посты о ЗОЖ и спортивных мероприятиях. Аудитория — сотрудники ВНИИЖТ. Тон: мотивирующий, профессиональный. Секции: йога, ОФП, волейбол, бадминтон, мини-футбол, баскетбол, настольный теннис, беговой клуб, фехтование. Мероприятия 2026: Спартакиада ТЕРПРОФЖЕЛ (II кв.), Первенство МЖД по волейболу, Кубок ВНИИЖТ по мини-футболу (III кв.). Пиши готовые тексты, которые можно сразу опубликовать.`,
+   q:['Напиши пост о пользе йоги','Анонс Кубка ВНИИЖТ по мини-футболу','Пост о пользе утренней зарядки']},
+  {id:'hr',nm:'Кадровый агент',rl:'База членов клуба',sc:'По запросу',ico:'👥',col:'var(--c-hr)',bg:'#EDE7F6',
+   p:`Ты — кадровый ассистент ФСК «Локомотив-ВНИИЖТ». Знаешь структуру клуба: 219 членов, 10 секций. Секции: тренажёрный зал (89 чел.), йога (35 чел.), беговой клуб (28 чел.), мини-футбол (22 чел.), настольный теннис (20 чел.), волейбол (12 чел.), бадминтон (8 чел.), баскетбол (5 чел.). Тренеры: Громова В.С. (йога), Голикова Е.В. (ОФП). Помогаешь: управлять базой членов, отслеживать посещаемость, записывать новых участников, формировать списки для мероприятий.`,
+   q:['Сколько человек в секции йоги?','Как записать нового члена клуба?','Какие секции самые популярные?']},
+  {id:'report',nm:'Отчётный агент',rl:'Отчёты для руководства',sc:'По запросу',ico:'📊',col:'var(--c-rep)',bg:'#E0F2F1',
+   p:`Ты — аналитик и специалист по отчётности для ФСК «Локомотив-ВНИИЖТ». Знаешь статистику: 219 членов, 10 секций, годовой бюджет ~800 тыс. руб. Проведённые мероприятия: Спартакиада ТЕРПРОФЖЕЛ, Первенство МЖД по волейболу, Кубок ВНИИЖТ по мини-футболу. Помогаешь составить: ежеквартальный отчёт для руководства ВНИИЖТ, отчёт о расходовании бюджета, отчёт по мероприятию, статистику посещаемости секций. Пиши структурированно, с цифрами.`,
+   q:['Составь квартальный отчёт','Структура отчёта о мероприятии','Статистика посещаемости за месяц']},
+  {id:'law',nm:'Нормативный агент',rl:'Законодательство и сроки',sc:'По запросу',ico:'⚖️',col:'var(--c-law)',bg:'#FBE9E7',
+   p:`Ты — специалист по нормативно-правовой базе корпоративного спорта в России. Знаешь: требования к договорам ГПХ с тренерами (ст. 779 ГК РФ), порядок составления актов об оказании услуг, нормы охраны труда в спортивных организациях, требования к спортивным мероприятиям на предприятии, нормативы ГТО 2026 для сотрудников. Контролируешь сроки: подачи документов, отчётности. Отвечай точно, с ссылками на нормативные акты.`,
+   q:['Требования к договору ГПХ с тренером','Как правильно оформить акт об услугах?','Нормативы ГТО для сотрудников ВНИИЖТ']},
+  {id:'memory',nm:'Агент памяти',rl:'Структурирование знаний',sc:'По запросу',ico:'🧠',col:'var(--c-mem)',bg:'#FFF3E0',
+   p:`Ты — ассистент по управлению знаниями для Ивана, сотрудника ФСК «Локомотив-ВНИИЖТ». Помогаешь структурировать заметки, создавать шаблоны, резюмировать информацию. Организация работает в спортивном ангаре на 3-й Мытищинской ул., д.10. Бюджет: ~800 000 руб/год. Отвечай структурированно.`,
+   q:['Помоги структурировать информацию','Создай шаблон служебной записки','Как организовать базу знаний?']},
+  {id:'browser',nm:'Браузер-агент',rl:'Поиск нормативов',sc:'По запросу',ico:'🌐',col:'var(--c-bro)',bg:'#E1F5FE',
+   p:`Ты — ассистент по поиску нормативно-правовой и методической информации для ФСК «Локомотив-ВНИИЖТ». Знаешь спортивное законодательство РФ, нормативы ГТО, требования к корпоративному спорту. Помогаешь найти документы, гранты, программы поддержки спорта. Указывай конкретные источники.`,
+   q:['Нормативы ГТО 2026 для сотрудников','Гранты для корпоративного спорта','Требования к договору с тренером']},
+  {id:'automation',nm:'Агент автоматизации',rl:'Автоматические напоминания',sc:'По запросу',ico:'⚙️',col:'var(--c-aut)',bg:'#FCE4EC',
+   p:`Ты — специалист по автоматизации для ФСК «Локомотив-ВНИИЖТ». Помогаешь настроить: автоматические напоминания о выплатах тренерам, уведомления о мероприятиях, интеграции Google Calendar + Gmail, Telegram-бот для спортотдела. Знаешь Google Apps Script, n8n, Telegram Bot API. Объясняй пошагово.`,
+   q:['Как автоматизировать напоминания?','Настроить Telegram-бот для отдела','Автоматизация расчёта выплат']},
+  {id:'research',nm:'Агент исследований',rl:'Аналитика и анализ',sc:'По запросу',ico:'🔍',col:'var(--c-res)',bg:'#E0F2F1',
+   p:`Ты — аналитик для ФСК «Локомотив-ВНИИЖТ». Статистика: 219 членов ФСК, 10 секций, бюджет 800 тыс. руб./год. Помогаешь анализировать посещаемость, сравнивать затраты на тренеров, оценивать эффективность мероприятий, строить аналитику.`,
+   q:['Анализ посещаемости секций','Как оценить эффективность мероприятия?','Динамика бюджета по кварталам']},
 ];
+
+const SECTIONS=[
+  {nm:'Тренажёрный зал',ico:'🏋️',cnt:89},
+  {nm:'Йога',ico:'🧘',cnt:35},
+  {nm:'Беговой клуб',ico:'🏃',cnt:28},
+  {nm:'Мини-футбол',ico:'⚽',cnt:22},
+  {nm:'Настольный теннис',ico:'🏓',cnt:20},
+  {nm:'Волейбол',ico:'🏐',cnt:12},
+  {nm:'Бадминтон',ico:'🏸',cnt:8},
+  {nm:'Баскетбол',ico:'🏀',cnt:5},
+];
+
+const EVENTS_DEFAULT=[
+  {id:'ev1',nm:'Спартакиада ТЕРПРОФЖЕЛ',date:'2026-06-15',quarter:'II кв. 2026',budget:'350 000 ₽',resp:'Иван',status:'planning',desc:'Соревнования по видам спорта среди профсоюзных организаций железнодорожного транспорта. Финансирование: АО ВНИИЖТ — 250 000 ₽, ППО — 100 000 ₽.',
+   checks:[{t:'Согласовать дату с ТЕРПРОФЖЕЛ',d:false},{t:'Оформить смету мероприятия',d:false},{t:'Подготовить списки участников',d:false},{t:'Согласовать место проведения',d:false},{t:'Разослать приглашения участникам',d:false},{t:'Подготовить грамоты и призы',d:false}]},
+  {id:'ev2',nm:'Первенство МЖД по волейболу',date:'2026-06-20',quarter:'II кв. 2026',budget:'120 000 ₽',resp:'Иван',status:'planning',desc:'Первенство Московской железной дороги по волейболу. Место: г. Москва-3.',
+   checks:[{t:'Согласовать заявку на участие',d:false},{t:'Сформировать команду (8–12 человек)',d:false},{t:'Оформить медицинские допуски',d:false},{t:'Организовать транспорт',d:false},{t:'Согласовать смету',d:false}]},
+  {id:'ev3',nm:'Кубок ВНИИЖТ по мини-футболу',date:'2026-08-15',quarter:'III кв. 2026',budget:'50 000 ₽',resp:'Иван',status:'planning',desc:'Кубок ВНИИЖТ по мини-футболу в рамках НОК ОАО «РЖД».',
+   checks:[{t:'Согласовать регламент соревнований',d:false},{t:'Сформировать состав команд',d:false},{t:'Подготовить спортивный инвентарь',d:false},{t:'Организовать судейство',d:false},{t:'Подготовить пресс-релиз для сайта',d:false}]},
+  {id:'ev4',nm:'Чемпионат НМЛ Грасс по мини-футболу',date:'2026-07-01',quarter:'Июль–Сентябрь 2026',budget:'—',resp:'Иван',status:'planning',desc:'Участие в Чемпионате Независимой молодёжной лиги Грасс по мини-футболу.',
+   checks:[{t:'Подать заявку на участие',d:false},{t:'Сформировать команду',d:false},{t:'Организовать форму и экипировку',d:false},{t:'Согласовать расписание игр',d:false}]},
+  {id:'ev5',nm:'День физкультурника ВНИИЖТ',date:'2026-08-08',quarter:'Август 2026',budget:'—',resp:'Иван',status:'planning',desc:'Ежегодный праздник — День физкультурника. Организация спортивных активностей для сотрудников.',
+   checks:[{t:'Разработать программу мероприятия',d:false},{t:'Согласовать площадку',d:false},{t:'Пригласить все секции',d:false},{t:'Подготовить анонс для сайта',d:false}]},
+];
+
 const TOPICS={activity:'🏃 Физактивность',nutrition:'🥗 Питание',sleep:'😴 Восстановление',mental:'🧠 Ментальное',event:'🏆 Мероприятие'};
 const WTHEMES=['','Физическая активность','Правильное питание','Сон и восстановление','Ментальное здоровье'];
 
-// ─── STORAGE ───
 const G=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch{return null}};
 const S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-let tasks=G('aic2_tasks')||[];
-let cons=G('aic2_cons')||[];
-let posts=G('aic2_posts')||[];
-let mem=G('aic2_mem')||{context:'',projects:'',decisions:''};
-let lg=G('aic2_log')||[];
-let cf='all';
 
-// ─── UTILS ───
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const tod=()=>new Date().toISOString().slice(0,10);
-const fmt=d=>{if(!d)return'';const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('ru-RU',{day:'numeric',month:'short'})};
-const ov=d=>d&&d<tod();
-const wn=()=>{const d=new Date(),s=new Date(d.getFullYear(),0,1);return Math.ceil(((d-s)/864e5+s.getDay()+1)/7)};
-function addLog(ico,txt){lg.unshift({t:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),ico,txt});if(lg.length>120)lg.pop();S('aic2_log',lg);renderLog()}
-
-// ─── NAVIGATION ───
-function gv(id,el){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('view-'+id).classList.add('active');
-  if(el)el.classList.add('active');
-  const T={dashboard:'Командный центр · НИИЖТ',tasks:'Поручения агентам',contracts:'Договоры с тренерами',smm:'SMM · Контент-план',memory:'Память агента',log:'Журнал действий'};
-  document.getElementById('vtitle').textContent=T[id]||'';
-  if(id==='contracts')renderCons();
-  if(id==='smm')renderSMM();
+function initData(){
+  if(G('aic4_init'))return;
+  const cons=[
+    {id:'c1',nm:'Громова Виктория Сергеевна',start:'2026-02-17',end:'2026-12-30',amt:4000,period:'monthly',pd:5,sport:'Йога',st:'active',note:'4 000 ₽/час. Итого за год: 364 000 ₽'},
+    {id:'c2',nm:'Голикова Екатерина Викторовна',start:'2026-04-01',end:'2026-12-24',amt:7000,period:'monthly',pd:5,sport:'ОФП',st:'active',note:'7 000 ₽/час. Итого за год: 133 000 ₽'},
+    {id:'c3',nm:'Ермак Евгения Николаевна',start:'2025-06-25',end:'2025-12-29',amt:4023,period:'monthly',pd:1,sport:'Настольный теннис',st:'expired',note:'ИСТЁК 29.12.2025 — нужен новый договор'},
+    {id:'c4',nm:'Гордиенко Станислав Александрович',start:'2025-05-21',end:'2025-10-30',amt:6525,period:'monthly',pd:1,sport:'Мини-футбол',st:'expired',note:'ИСТЁК 30.10.2025 — нужен новый договор'},
+  ];
+  S('aic4_cons',cons);
+  const tasks=[
+    {id:'t1',ag:'contract',pr:'h',ttl:'Получить акт и счёт от Голиковой за май',dsc:'Акт нужен до 1 июня. Сумма: ~35 000 ₽',dl:'2026-06-01',st:'pending',dt:'2026-05-31'},
+    {id:'t2',ag:'contract',pr:'h',ttl:'Получить акт и счёт от Громовой за май',dsc:'5 занятий в мае = 28 000 ₽. Акт до 1 июня.',dl:'2026-06-01',st:'pending',dt:'2026-05-31'},
+    {id:'t3',ag:'contract',pr:'h',ttl:'Оформить новый договор с Ермак',dsc:'Договор истёк 29.12.2025. Нужен новый на 2026 год.',dl:'2026-06-07',st:'pending',dt:'2026-05-31'},
+    {id:'t4',ag:'contract',pr:'h',ttl:'Оформить новый договор с Гордиенко',dsc:'Договор истёк 30.10.2025. Уточнить статус и переоформить.',dl:'2026-06-07',st:'pending',dt:'2026-05-31'},
+    {id:'t5',ag:'dispatch',pr:'m',ttl:'Уточнить статус Спартакиады ТЕРПРОФЖЕЛ',dsc:'Бюджет 350 000 руб. Что нужно подготовить?',dl:'2026-06-10',st:'pending',dt:'2026-05-31'},
+    {id:'t6',ag:'dispatch',pr:'m',ttl:'Сформировать команду по волейболу',dsc:'Первенство МЖД, II кв. Место: Москва-3. Нужно 8–12 человек.',dl:'2026-06-10',st:'pending',dt:'2026-05-31'},
+    {id:'t7',ag:'smm',pr:'l',ttl:'Анонс Кубка ВНИИЖТ по мини-футболу',dsc:'III квартал. НОК ОАО «РЖД». Нужен пост на сайт.',dl:'2026-06-20',st:'pending',dt:'2026-05-31'},
+  ];
+  S('aic4_tasks',tasks);
+  S('aic4_events',EVENTS_DEFAULT);
+  S('aic4_mem',{
+    context:'Ведущий специалист спортивной деятельности, ВНИИЖТ\nОрганизация: ФСК «Локомотив-ВНИИЖТ»\nМесто: г. Москва, 3-я Мытищинская ул., д. 10\nРуководитель: Шатов И.О. | ППО: Меньшиков А.А.\nБюджет: ~800 000 руб/год (АО ВНИИЖТ + ППО)',
+    projects:'1. Контроль договоров тренеров (Громова, Голикова активны до кон. 2026)\n2. Переоформление договоров: Ермак, Гордиенко (истекли)\n3. Спартакиада ТЕРПРОФЖЕЛ (июнь 2026, бюджет 350 тыс.)\n4. Первенство МЖД по волейболу (июнь 2026)\n5. Кубок ВНИИЖТ по мини-футболу (август 2026)\n6. Ежечетверговые ЗОЖ-посты для сайта ВНИИЖТ',
+    decisions:'Выплаты тренерам: 5 банк. дней после подписания акта\nДоговоры заключает ТЕРПРОФЖЕЛ МОСЖЕЛТРАНС (Сироткин С.М.)\nСтатистика ФСК: 219 членов, 10 секций\nТренажёрный зал — самая многочисленная секция (89 чел.)\nРеквизиты: ИНН 7708171493, ВТБ БИК 044525411'
+  });
+  S('aic4_init',true);
 }
 
-// ─── CLOCK ───
-const clk=()=>document.getElementById('clock').textContent=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-setInterval(clk,1000);clk();
+let tasks=[], cons=[], posts=[], mem={context:'',projects:'',decisions:''}, chats={}, pays=[], events=[];
+let curAgent=null, tfc='all', evfc='all', busy=false;
 
-// ─── AGENTS GRID ───
-function renderAgents(){
-  document.getElementById('agents-grid').innerHTML=AGENTS.map(a=>{
+function loadAll(){
+  tasks=G('aic4_tasks')||[];
+  cons=G('aic4_cons')||[];
+  posts=G('aic4_posts')||[];
+  mem=G('aic4_mem')||{context:'',projects:'',decisions:''};
+  chats=G('aic4_chats')||{};
+  pays=G('aic4_pays')||[];
+  events=G('aic4_events')||EVENTS_DEFAULT;
+}
+
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const tod=()=>new Date().toISOString().slice(0,10);
+const fmt=d=>{if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'short'})};
+const fmtMonth=d=>{if(!d)return'';const[y,m]=d.split('-');return new Date(y,m-1,1).toLocaleDateString('ru-RU',{month:'long',year:'numeric'})};
+const ov=d=>d&&d<tod();
+const now=()=>new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+const wn=()=>{const d=new Date(),s=new Date(d.getFullYear(),0,1);return Math.ceil(((d-s)/864e5+s.getDay()+1)/7)};
+
+// ─── NAV ───
+function gv(id,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+  if(id==='contracts')rCons();
+  if(id==='smm')rSMM();
+  if(id==='finance'){rFinanceTrainers();rPays();}
+  if(id==='events')rEvents();
+  if(id==='members')rMembers();
+}
+setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),1000);
+
+// ─── SIDEBAR ───
+function rSide(){
+  document.getElementById('aside').innerHTML=AGENTS.map(a=>`
+    <button class="abtn ${curAgent===a.id?'on':''}" onclick="selAgent('${a.id}')">
+      <div class="aico" style="background:${a.bg}">${a.ico}</div>
+      <div><div class="aname">${a.nm}</div><div class="asched">${a.sc}</div></div>
+    </button>`).join('');
+}
+
+function selAgent(id){
+  curAgent=id;rSide();
+  const a=AGENTS.find(x=>x.id===id);
+  document.getElementById('ch-ico').textContent=a.ico;
+  document.getElementById('ch-ico').style.background=a.bg;
+  document.getElementById('ch-nm').textContent=a.nm;
+  document.getElementById('ch-rl').textContent=a.rl;
+  rMsgs();
+}
+
+// ─── CHAT ───
+function rMsgs(){
+  const el=document.getElementById('msgs');
+  const ms=chats[curAgent]||[];
+  const a=AGENTS.find(x=>x.id===curAgent);
+  if(!ms.length){
+    el.innerHTML=`<div class="chat-empty">
+      <span class="big">${a?.ico||'🤖'}</span>
+      <p>${a?.nm||'Агент'}<br><small style="color:var(--on-sur-v)">${a?.rl||''}</small></p>
+      <div class="qps">${(a?.q||[]).map(q=>`<div class="qp" onclick="qs('${q.replace(/'/g,"\\'")}')">${q}</div>`).join('')}</div>
+    </div>`;return;
+  }
+  el.innerHTML=ms.map(m=>`
+    <div class="msg-row ${m.r}">
+      <div class="bubble">${escHtml(m.t)}</div>
+      <div class="mt">${m.ts}</div>
+    </div>`).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function qs(t){document.getElementById('inp').value=t;send();}
+
+async function send(){
+  if(busy||!curAgent)return;
+  const inp=document.getElementById('inp');
+  const text=inp.value.trim();if(!text)return;
+  inp.value='';inp.style.height='auto';
+  busy=true;document.getElementById('sbtn').disabled=true;
+
+  if(!chats[curAgent])chats[curAgent]=[];
+  chats[curAgent].push({r:'u',t:text,ts:now()});
+  S('aic4_chats',chats);rMsgs();
+
+  const msgs=document.getElementById('msgs');
+  const td=document.createElement('div');
+  td.className='msg-row a';td.id='td';
+  td.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  msgs.appendChild(td);msgs.scrollTop=msgs.scrollHeight;
+
+  try{
+    const a=AGENTS.find(x=>x.id===curAgent);
+    const myTasks=tasks.filter(t=>t.ag===curAgent&&t.st!=='done').map(t=>`• ${t.ttl}${t.dl?' (до '+fmt(t.dl)+')':''}`).join('\n')||'нет';
+    const finCtx=curAgent==='finance'?`\nВыплаты этого года: ${pays.map(p=>`${p.nm} — ${p.amt.toLocaleString('ru-RU')}₽ (${p.month})`).join(', ')||'пока нет'}. Бюджет израсходован: ${pays.reduce((s,p)=>s+p.amt,0).toLocaleString('ru-RU')} ₽ из 800 000 ₽.`:'';
+    const evCtx=curAgent==='dispatch'?`\nМероприятия: ${events.filter(e=>e.status!=='done').map(e=>`${e.nm} (${e.quarter})`).join(', ')}.`:'';
+    const prompt=`${a.p}\n\nМои активные задачи для тебя:\n${myTasks}${finCtx}${evCtx}\n\nКонтекст: ${mem.context||'ВНИИЖТ, спортотдел'}\n\nСообщение пользователя: ${text}\n\nОтвечай на русском языке, кратко и по делу.`;
+
+    const result=await window.cowork.askClaude(prompt,[]);
+    let reply='';
+    if(typeof result==='string') reply=result;
+    else if(result&&Array.isArray(result.content)) reply=result.content.filter(c=>c.type==='text').map(c=>c.text).join('\n');
+    else if(result&&typeof result.text==='string') reply=result.text;
+    else if(result&&typeof result.response==='string') reply=result.response;
+    else if(result&&typeof result.completion==='string') reply=result.completion;
+    else if(result&&result.message&&typeof result.message==='string') reply=result.message;
+    else{const vals=Object.values(result||{});const strVal=vals.find(v=>typeof v==='string'&&v.length>5);reply=strVal||JSON.stringify(result,null,2);}
+    if(!reply||reply.trim()==='')reply='(пустой ответ)';
+
+    document.getElementById('td')?.remove();
+    chats[curAgent].push({r:'a',t:reply,ts:now()});
+    S('aic4_chats',chats);rMsgs();
+  }catch(e){
+    document.getElementById('td')?.remove();
+    chats[curAgent].push({r:'a',t:'⚠️ Ошибка: '+e.message,ts:now()});
+    S('aic4_chats',chats);rMsgs();
+  }
+  busy=false;document.getElementById('sbtn').disabled=false;
+  document.getElementById('inp').focus();
+}
+
+function clearChat(){if(!curAgent)return;chats[curAgent]=[];S('aic4_chats',chats);rMsgs();}
+function openChat(id){selAgent(id);gv('chat',document.querySelectorAll('.tab')[1]);}
+
+// ─── AGENT GRID ───
+function rAgGrid(){
+  document.getElementById('ag-grid').innerHTML=AGENTS.map(a=>{
     const n=tasks.filter(t=>t.ag===a.id&&t.st!=='done').length;
-    return`<div class="agent-card" style="border-left-color:${a.col}" onclick="filtAgent('${a.id}')">
-      <div class="agent-header">
-        <div class="agent-avatar" style="background:${a.col}25">${a.ico}</div>
-        <div><div class="agent-name">${a.name}</div><div class="agent-role">${a.role}</div></div>
+    return`<div class="agc" style="border-left-color:${a.col}" onclick="openChat('${a.id}')">
+      <div class="agh"><div class="agav" style="background:${a.bg}">${a.ico}</div>
+        <div><div class="agnm">${a.nm}</div><div class="agrl">${a.rl}</div></div>
       </div>
-      <div class="agent-meta">
-        <span class="sdot ${a.st}"></span>
-        <span class="tag">⏰ ${a.sched}</span>
-        ${n?`<span class="task-count">${n}</span>`:''}
+      <div class="agmt"><span class="sdot ${a.sc.includes('По')?'idle':'sched'}"></span>
+        <span class="tag">${a.sc}</span>${n?`<span class="tc">${n}</span>`:''}
       </div>
     </div>`;
   }).join('');
-}
-
-function filtAgent(id){
-  gv('tasks',document.querySelectorAll('.nav-item')[1]);
-  cf=id;
-  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
-  renderTasks();
 }
 
 // ─── TASKS ───
 function addTask(){
-  const title=document.getElementById('ta-title').value.trim();
-  if(!title){alert('Введите название задачи');return;}
-  const t={id:uid(),ag:document.getElementById('ta-agent').value,pr:document.getElementById('ta-prior').value,title,desc:document.getElementById('ta-desc').value.trim(),dead:document.getElementById('ta-dead').value,st:'pending',dt:tod()};
-  tasks.unshift(t);S('aic2_tasks',tasks);
-  addLog('✅',`Поручение «${title}» → ${AGENTS.find(a=>a.id===t.ag)?.name}`);
-  document.getElementById('ta-title').value='';document.getElementById('ta-desc').value='';document.getElementById('ta-dead').value='';
-  renderTasks();renderAgents();renderUrgent();metrics();
+  const tl=document.getElementById('ta-tl').value.trim();if(!tl){alert('Введите название');return;}
+  tasks.unshift({id:uid(),ag:document.getElementById('ta-ag').value,pr:document.getElementById('ta-pr').value,ttl:tl,dsc:document.getElementById('ta-ds').value.trim(),dl:document.getElementById('ta-dl').value,st:'pending',dt:tod()});
+  S('aic4_tasks',tasks);
+  ['ta-tl','ta-ds','ta-dl'].forEach(x=>document.getElementById(x).value='');
+  rTasks();rAgGrid();rUrgent();metrics();
 }
-
-function renderTasks(){
+function rTasks(){
   let fl=tasks;
-  if(cf==='active')fl=tasks.filter(t=>t.st!=='done');
-  else if(cf==='done')fl=tasks.filter(t=>t.st==='done');
-  else if(cf==='h')fl=tasks.filter(t=>t.pr==='h'&&t.st!=='done');
-  else if(cf!=='all')fl=tasks.filter(t=>t.ag===cf);
-  const el=document.getElementById('task-list');
-  if(!fl.length){el.innerHTML=`<div class="empty"><span class="material-icons">inbox</span>Нет задач</div>`;return;}
+  if(tfc==='active')fl=tasks.filter(t=>t.st!=='done');
+  else if(tfc==='done')fl=tasks.filter(t=>t.st==='done');
+  else if(tfc==='h')fl=tasks.filter(t=>t.pr==='h'&&t.st!=='done');
+  else if(tfc!=='all')fl=tasks.filter(t=>t.ag===tfc);
+  const el=document.getElementById('tlist');
+  if(!fl.length){el.innerHTML=`<div class="empty">Нет задач</div>`;return;}
   el.innerHTML=fl.map(t=>{
-    const a=AGENTS.find(x=>x.id===t.ag);
-    const o=ov(t.dead)&&t.st!=='done';
-    return`<div class="task-item p${t.pr} ${t.st==='done'?'done':''}">
-      <div class="tcheck ${t.st==='done'?'on':''}" onclick="togTask('${t.id}')">${t.st==='done'?'✓':''}</div>
-      <div class="tbody">
-        <div class="task-title">${t.title}</div>
-        ${t.desc?`<div class="task-desc">${t.desc}</div>`:''}
-        <div class="task-foot">
-          ${a?`<span class="atag" style="background:${a.col}20;color:${a.col}">${a.ico} ${a.name}</span>`:''}
-          ${t.dead?`<span class="ddate ${o?'ov':''}"><span class="material-icons">event</span>${fmt(t.dead)}${o?' ⚠️':''}</span>`:''}
+    const a=AGENTS.find(x=>x.id===t.ag);const o=ov(t.dl)&&t.st!=='done';
+    return`<div class="ti p${t.pr} ${t.st==='done'?'done':''}">
+      <div class="chk ${t.st==='done'?'on':''}" onclick="togT('${t.id}')">${t.st==='done'?'✓':''}</div>
+      <div class="tb"><div class="ttl">${t.ttl}</div>
+        ${t.dsc?`<div class="tdsc">${t.dsc}</div>`:''}
+        <div class="tft">${a?`<span class="atag" style="background:${a.bg};color:${a.col}">${a.ico} ${a.nm}</span>`:''}
+          ${t.dl?`<span class="ddt ${o?'ov':''}">📅 ${fmt(t.dl)}${o?' ⚠️':''}</span>`:''}
         </div>
-      </div>
-      <button class="iBtn" onclick="delTask('${t.id}')"><span class="material-icons">delete</span></button>
+      </div><button class="ibtn" onclick="delT('${t.id}')">✕</button>
     </div>`;
   }).join('');
 }
+function togT(id){const t=tasks.find(x=>x.id===id);if(!t)return;t.st=t.st==='done'?'pending':'done';S('aic4_tasks',tasks);rTasks();rAgGrid();rUrgent();metrics();}
+function delT(id){tasks=tasks.filter(x=>x.id!==id);S('aic4_tasks',tasks);rTasks();rAgGrid();rUrgent();metrics();}
+function tf(f,el){tfc=f;document.querySelectorAll('.fchips .fc').forEach(c=>c.classList.remove('on'));if(el)el.classList.add('on');rTasks();}
 
-function togTask(id){
-  const t=tasks.find(t=>t.id===id);if(!t)return;
-  t.st=t.st==='done'?'pending':'done';
-  S('aic2_tasks',tasks);
-  if(t.st==='done')addLog('✓',`Выполнено: «${t.title}»`);
-  renderTasks();renderAgents();renderUrgent();metrics();
-}
-function delTask(id){
-  const t=tasks.find(t=>t.id===id);
-  tasks=tasks.filter(t=>t.id!==id);S('aic2_tasks',tasks);
-  addLog('🗑',`Удалено: «${t?.title}»`);
-  renderTasks();renderAgents();renderUrgent();metrics();
-}
-function filt(f,el){cf=f;document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));if(el)el.classList.add('active');renderTasks();}
-
-function renderUrgent(){
-  const ur=tasks.filter(t=>t.st!=='done'&&(t.pr==='h'||ov(t.dead))).slice(0,4);
-  const el=document.getElementById('urgent-list');
-  if(!ur.length){el.innerHTML=`<div style="color:var(--md-on-surface-variant);font-size:13px;padding:10px 0">Срочных задач нет 🎉</div>`;return;}
-  el.innerHTML=ur.map(t=>{
-    const a=AGENTS.find(x=>x.id===t.ag);const o=ov(t.dead);
-    return`<div class="task-item p${t.pr}">
-      <div class="tcheck" onclick="togTask('${t.id}')"></div>
-      <div class="tbody">
-        <div class="task-title">${t.title}</div>
-        <div class="task-foot">
-          ${a?`<span class="atag" style="background:${a.col}20;color:${a.col}">${a.ico} ${a.name}</span>`:''}
-          ${t.dead?`<span class="ddate ${o?'ov':''}">${fmt(t.dead)}${o?' ⚠️':''}</span>`:''}
+function rUrgent(){
+  const ur=tasks.filter(t=>t.st!=='done'&&(t.pr==='h'||ov(t.dl))).slice(0,5);
+  const el=document.getElementById('urgent');
+  if(!ur.length){el.innerHTML=`<div style="color:var(--on-sur-v);font-size:12px;padding:6px 0">Срочных задач нет 🎉</div>`;return;}
+  el.innerHTML=ur.map(t=>{const a=AGENTS.find(x=>x.id===t.ag);const o=ov(t.dl);
+    return`<div class="ti p${t.pr}">
+      <div class="chk" onclick="togT('${t.id}')"></div>
+      <div class="tb"><div class="ttl">${t.ttl}</div>
+        <div class="tft">${a?`<span class="atag" style="background:${a.bg};color:${a.col}">${a.ico} ${a.nm}</span>`:''}
+          ${t.dl?`<span class="ddt ${o?'ov':''}">${fmt(t.dl)}${o?' ⚠️':''}</span>`:''}
         </div>
       </div>
-    </div>`;
-  }).join('');
+    </div>`;}).join('');
 }
 
 // ─── CONTRACTS ───
-function openM(id){document.getElementById(id).classList.add('open')}
-function closeM(id){document.getElementById(id).classList.remove('open')}
+function openM(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='mp')document.getElementById('pd').value=tod();
+  if(id==='mact'||id==='act'){
+    const sel=document.getElementById('act-trainer');
+    sel.innerHTML=cons.filter(c=>c.st==='active').map(c=>`<option value="${c.id}">${c.nm} (${c.sport}, ${c.amt.toLocaleString()}₽/ч)</option>`).join('');
+    const now=new Date();document.getElementById('act-month').value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    document.getElementById('act-preview').style.display='none';
+  }
+}
+function closeM(id){document.getElementById(id).classList.remove('open');}
 
-function nextPay(c){
-  const now=new Date();
-  if(c.period==='monthly'){let d=new Date(now.getFullYear(),now.getMonth(),c.pd||1);if(d<=now)d=new Date(now.getFullYear(),now.getMonth()+1,c.pd||1);return d.toISOString().slice(0,10);}
-  if(c.period==='once')return c.end;
+function nxtPay(c){
+  if(c.st==='expired')return null;
+  const n=new Date();
+  if(c.period==='monthly'){let d=new Date(n.getFullYear(),n.getMonth(),c.pd||1);if(d<=n)d=new Date(n.getFullYear(),n.getMonth()+1,c.pd||1);return d.toISOString().slice(0,10);}
   return c.end;
 }
-
 function saveCon(){
   const nm=document.getElementById('cn').value.trim();if(!nm){alert('Введите ФИО');return;}
-  const c={id:uid(),name:nm,start:document.getElementById('cs').value,end:document.getElementById('ce').value,amt:parseInt(document.getElementById('ca').value)||0,period:document.getElementById('cp').value,pd:parseInt(document.getElementById('cd').value)||1,sport:document.getElementById('csport').value.trim()};
-  cons.push(c);S('aic2_cons',cons);addLog('📄',`Договор: ${c.name}`);closeM('mc');renderCons();metrics();
-  ['cn','cs','ce','ca','cd','csport'].forEach(x=>document.getElementById(x).value='');
+  cons.push({id:uid(),nm,start:document.getElementById('cs').value,end:document.getElementById('ce2').value,amt:parseInt(document.getElementById('ca').value)||0,period:'monthly',pd:parseInt(document.getElementById('cd').value)||1,sport:document.getElementById('csp').value.trim(),st:document.getElementById('cst').value,note:''});
+  S('aic4_cons',cons);closeM('mc');rCons();rFinanceTrainers();metrics();
+  ['cn','cs','ce2','ca','cd','csp'].forEach(x=>document.getElementById(x).value='');
 }
-function delCon(id){const c=cons.find(x=>x.id===id);cons=cons.filter(x=>x.id!==id);S('aic2_cons',cons);addLog('🗑',`Договор удалён: ${c?.name}`);renderCons();}
-
-function renderCons(){
+function delCon(id){cons=cons.filter(x=>x.id!==id);S('aic4_cons',cons);rCons();}
+function rCons(){
   const todStr=tod();const s7=new Date();s7.setDate(s7.getDate()+7);const s7s=s7.toISOString().slice(0,10);
-  // alerts
-  const soon=cons.filter(c=>{const np=nextPay(c);return np&&np<=s7s&&np>=todStr});
-  const ael=document.getElementById('pay-alerts');
-  ael.innerHTML=soon.map(c=>`<div class="pay-alert"><span class="material-icons">warning</span><div><strong>${c.name}</strong> — ${c.amt.toLocaleString('ru-RU')} ₽ до ${fmt(nextPay(c))}</div></div>`).join('');
-  document.getElementById('badge-c').style.display=soon.length?'flex':'none';
-  // list
-  const el=document.getElementById('con-list');
-  if(!cons.length){el.innerHTML=`<div class="empty"><span class="material-icons">description</span>Нет договоров. Нажмите «Добавить».</div>`;return;}
-  el.innerHTML=cons.map(c=>{
-    const exp=c.end&&c.end<todStr;
-    return`<div class="con-item" style="opacity:${exp?.5:1}">
-      <div>
-        <div class="con-name">${c.name}${exp?' <span style="color:#F44336;font-size:10px">(истёк)</span>':''}</div>
-        <div class="con-meta">📅 ${fmt(c.start)} – ${fmt(c.end)}</div>
-        <div class="con-meta">🏃 ${c.sport||'—'} &nbsp;·&nbsp; ${{monthly:'Ежемесячно',biweekly:'Раз в 2 нед.',weekly:'Еженедельно',once:'Разово'}[c.period]}</div>
-        <div class="con-meta">Следующая выплата: <strong>${fmt(nextPay(c))}</strong></div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <div class="con-amt">${c.amt.toLocaleString('ru-RU')} ₽</div>
-        <div class="con-next">${{monthly:'/мес',weekly:'/нед',biweekly:'/2нед',once:'разово'}[c.period]}</div>
-        <button class="iBtn" onclick="delCon('${c.id}')"><span class="material-icons" style="font-size:16px">delete</span></button>
-      </div>
-    </div>`;
-  }).join('');
-  // timeline
-  const tl=cons.map(c=>({name:c.name,amt:c.amt,date:nextPay(c)})).filter(p=>p.date).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
-  const tel=document.getElementById('pay-timeline');
-  if(!tl.length){tel.innerHTML=`<div style="color:var(--md-on-surface-variant);font-size:13px">Предстоящих выплат нет</div>`;return;}
-  tel.innerHTML=tl.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--md-outline-variant)"><div><div style="font-size:13px;font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--md-on-surface-variant)">${fmt(p.date)}</div></div><div style="font-size:15px;font-weight:700;color:var(--md-primary)">${p.amt.toLocaleString('ru-RU')} ₽</div></div>`).join('');
+  const soon=cons.filter(c=>{const np=nxtPay(c);return np&&np<=s7s&&np>=todStr});
+  document.getElementById('pal').innerHTML=soon.map(c=>`<div class="alert"><span class="alert-ico">⚠️</span><div><strong>${c.nm}</strong> — выплата ${c.amt.toLocaleString('ru-RU')} ₽ до ${fmt(nxtPay(c))}</div></div>`).join('');
+  const el=document.getElementById('clist');
+  if(!cons.length){el.innerHTML=`<div class="empty">Нет договоров</div>`;return;}
+  el.innerHTML=cons.map(c=>`<div class="ci ${c.st==='expired'?'expired':''}">
+    <div>
+      <div class="cn">${c.nm} ${c.st==='expired'?'<span style="color:var(--err);font-size:10px">● Истёк</span>':'<span style="color:#2E7D32;font-size:10px">● Активен</span>'}</div>
+      <div class="cm">📅 ${fmt(c.start)} – ${fmt(c.end)}<br>🏃 ${c.sport||'—'} · ${c.amt.toLocaleString('ru-RU')} ₽/час<br>${c.note?'ℹ️ '+c.note+'<br>':''} ${nxtPay(c)?'Выплата: <strong>'+fmt(nxtPay(c))+'</strong>':'Нет выплат'}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div class="ca">${c.amt.toLocaleString('ru-RU')} ₽</div>
+      <div class="cper">/час</div>
+      <button class="ibtn" style="margin-top:5px" onclick="delCon('${c.id}')">✕</button>
+    </div>
+  </div>`).join('');
+  const tl=cons.filter(c=>nxtPay(c)).map(c=>({nm:c.nm,amt:c.amt,date:nxtPay(c)})).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
+  const tel=document.getElementById('ptl');
+  if(!tl.length){tel.innerHTML=`<div style="color:var(--on-sur-v);font-size:12px">Нет предстоящих выплат</div>`;return;}
+  tel.innerHTML=tl.map(p=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--out-v)"><div><div style="font-size:13px;font-weight:500">${p.nm}</div><div style="font-size:11px;color:var(--on-sur-v)">${fmt(p.date)}</div></div><div style="font-size:14px;font-weight:700;color:var(--pri)">${p.amt.toLocaleString('ru-RU')} ₽/час</div></div>`).join('');
   metrics();
 }
 
-// ─── SMM ───
-function renderSMM(){
-  const wk=wn();
-  document.getElementById('wnum').textContent=wk;
-  document.getElementById('wtheme').textContent=WTHEMES[wk%4||4];
-  const days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-  const now=new Date(),dow=(now.getDay()||7)-1;
-  const ws=new Date(now);ws.setDate(now.getDate()-dow);
-  document.getElementById('wgrid').innerHTML=days.map((d,i)=>{
-    const dt=new Date(ws);dt.setDate(ws.getDate()+i);
-    const ds=dt.toISOString().slice(0,10);
-    const isT=ds===tod(),hp=posts.some(p=>p.date===ds);
-    return`<div class="wday ${isT?'today':''} ${hp?'haspost':''}"><div class="wday-n">${d}</div><div class="wday-d">${dt.getDate()}</div><div class="wday-dot"></div></div>`;
-  }).join('');
-  const el=document.getElementById('post-list');
-  if(!posts.length){el.innerHTML=`<div class="empty"><span class="material-icons">campaign</span>Постов нет. Дождитесь агента в среду или добавьте вручную.</div>`;return;}
-  el.innerHTML=posts.map(p=>`<div class="post-card">
-    <div class="post-topic">${TOPICS[p.topic]||p.topic}</div>
-    <div class="post-title">${p.title}</div>
-    ${p.text?`<div class="post-prev">${p.text.slice(0,220)}${p.text.length>220?'…':''}</div>`:''}
-    <div class="post-foot">
-      <span class="tag">📅 ${fmt(p.date)}</span>
-      <button class="iBtn" onclick="cpPost('${p.id}')" title="Копировать"><span class="material-icons">content_copy</span></button>
-      <button class="iBtn" onclick="delPost('${p.id}')"><span class="material-icons">delete</span></button>
+// ─── FINANCE ───
+function rFinanceTrainers(){
+  const sel=document.getElementById('fc-trainer');
+  sel.innerHTML='<option value="">— выберите —</option>'+cons.filter(c=>c.st==='active').map(c=>`<option value="${c.id}">${c.nm} (${c.sport})</option>`).join('');
+  const now=new Date();document.getElementById('fc-month').value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('fc-hours').value='1';
+}
+
+function calcFin(){
+  const cid=document.getElementById('fc-trainer').value;
+  const sessions=parseFloat(document.getElementById('fc-sessions').value)||0;
+  const hours=parseFloat(document.getElementById('fc-hours').value)||1;
+  const month=document.getElementById('fc-month').value;
+  const res=document.getElementById('fin-result');
+  if(!cid||!sessions){res.style.display='none';return;}
+  const con=cons.find(c=>c.id===cid);if(!con){res.style.display='none';return;}
+  const total=con.amt*sessions*hours;
+  document.getElementById('fin-amount').textContent=total.toLocaleString('ru-RU')+' ₽';
+  document.getElementById('fin-label').textContent=`${con.nm} · ${sessions} занят. × ${hours}ч × ${con.amt.toLocaleString('ru-RU')}₽/ч${month?' · '+fmtMonth(month):''}`;
+  res.style.display='block';
+  res.dataset.cid=cid;res.dataset.sessions=sessions;res.dataset.hours=hours;res.dataset.month=month;res.dataset.total=total;res.dataset.nm=con.nm;
+}
+
+function savePayment(){
+  const res=document.getElementById('fin-result');
+  if(res.style.display==='none')return;
+  const pay={id:uid(),nm:res.dataset.nm,month:fmtMonth(res.dataset.month)||res.dataset.month,sessions:parseFloat(res.dataset.sessions),hours:parseFloat(res.dataset.hours),amt:parseFloat(res.dataset.total),dt:tod()};
+  pays.unshift(pay);S('aic4_pays',pays);rPays();
+  alert(`✅ Выплата ${pay.amt.toLocaleString('ru-RU')} ₽ записана`);
+}
+
+function rPays(){
+  const total=pays.reduce((s,p)=>s+p.amt,0);
+  const budget=800000;
+  document.getElementById('b-spent').textContent=total.toLocaleString('ru-RU')+' ₽';
+  document.getElementById('b-left').textContent=Math.max(0,budget-total).toLocaleString('ru-RU')+' ₽';
+  const pct=Math.min(100,(total/budget)*100);
+  document.getElementById('budget-fill').style.width=pct+'%';
+  const el=document.getElementById('pay-list');
+  if(!pays.length){el.innerHTML=`<div class="empty">Выплат пока нет.</div>`;return;}
+  el.innerHTML=pays.map(p=>`<div class="pay-item">
+    <div><div class="pay-nm">${p.nm}</div><div class="pay-dt">${p.month} · ${p.sessions} занят. × ${p.hours}ч</div></div>
+    <div style="text-align:right">
+      <div class="pay-amt">${p.amt.toLocaleString('ru-RU')} ₽</div>
+      <button class="ibtn" onclick="delPay('${p.id}')">✕</button>
     </div>
   </div>`).join('');
 }
-function savePost(){
-  const t=document.getElementById('ptitle').value.trim();if(!t){alert('Введите заголовок');return;}
-  const p={id:uid(),topic:document.getElementById('ptopic').value,date:document.getElementById('pdate').value,title:t,text:document.getElementById('ptext').value.trim()};
-  posts.unshift(p);S('aic2_posts',posts);addLog('📱',`Пост: «${p.title}»`);closeM('mp');renderSMM();
-  ['ptitle','ptext'].forEach(x=>document.getElementById(x).value='');
+
+function delPay(id){pays=pays.filter(p=>p.id!==id);S('aic4_pays',pays);rPays();}
+function clearPays(){if(confirm('Очистить историю выплат?')){pays=[];S('aic4_pays',pays);rPays();}}
+
+function openActModal(){
+  const res=document.getElementById('fin-result');
+  if(res.style.display==='none'){openM('mact');return;}
+  openM('mact');
+  setTimeout(()=>{
+    const sel=document.getElementById('act-trainer');
+    sel.value=res.dataset.cid||'';
+    document.getElementById('act-sessions').value=res.dataset.sessions||'1';
+    document.getElementById('act-hours').value=res.dataset.hours||'1';
+    document.getElementById('act-month').value=res.dataset.month||'';
+    previewAct();
+  },50);
 }
-function delPost(id){posts=posts.filter(p=>p.id!==id);S('aic2_posts',posts);renderSMM();}
-function cpPost(id){const p=posts.find(p=>p.id===id);if(p)navigator.clipboard.writeText(`${p.title}\n\n${p.text}`).then(()=>addLog('📋','Текст поста скопирован'));}
-function openM(id){document.getElementById(id).classList.add('open');if(id==='mp')document.getElementById('pdate').value=tod();}
+
+function previewAct(){
+  const cid=document.getElementById('act-trainer').value;
+  const sessions=parseFloat(document.getElementById('act-sessions').value)||1;
+  const hours=parseFloat(document.getElementById('act-hours').value)||1;
+  const month=document.getElementById('act-month').value;
+  const num=document.getElementById('act-num').value||'__';
+  if(!cid){document.getElementById('act-preview').style.display='none';return;}
+  const con=cons.find(c=>c.id===cid);if(!con)return;
+  const total=(con.amt*sessions*hours).toLocaleString('ru-RU');
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  const monthStr=fmtMonth(month)||'___________';
+  const srv={Йога:'проведение занятий по йоге',ОФП:'проведение занятий по общей физической подготовке','Настольный теннис':'проведение занятий по настольному теннису','Мини-футбол':'проведение занятий по мини-футболу'}[con.sport]||`проведение занятий по ${con.sport||'физической культуре'}`;
+  const txt=`АКТ № ${num}
+об оказании услуг по договору возмездного оказания услуг
+
+г. Москва                                          «${now.getDate()}» ${now.toLocaleDateString('ru-RU',{month:'long'})} ${now.getFullYear()} г.
+
+Первичная профсоюзная организация работников
+ОАО «ВНИИЖТ» ТЕРПРОФЖЕЛ МОСЖЕЛТРАНС,
+именуемая в дальнейшем «Заказчик», в лице
+Председателя Сироткина С.М., действующего на
+основании Устава, с одной стороны,
+
+и гражданин(ка) ${con.nm},
+именуемый(ая) в дальнейшем «Исполнитель»,
+с другой стороны, составили настоящий акт о том, что:
+
+1. Исполнитель оказал(а) Заказчику услуги по
+   ${srv}
+   для членов ФСК «Локомотив-ВНИИЖТ»
+   в ${monthStr}.
+
+2. Характеристика выполненных работ:
+   Количество занятий: ${sessions} (${numWords(sessions)})
+   Продолжительность занятия: ${hours} ч.
+   Ставка за 1 час: ${con.amt.toLocaleString('ru-RU')} руб.
+
+3. Стоимость оказанных услуг:
+   ИТОГО: ${total} (${rubles(con.amt*sessions*hours)}) рублей 00 копеек.
+
+4. Услуги выполнены в полном объёме и в установленные
+   сроки. Качество оказанных услуг соответствует
+   условиям договора. Претензий нет.
+
+Заказчик: _____________________  Сироткин С.М.
+Исполнитель: __________________  ${con.nm}`;
+  document.getElementById('act-text').textContent=txt;
+  document.getElementById('act-preview').style.display='block';
+}
+
+function numWords(n){const w=['ноль','одно','два','три','четыре','пять','шесть','семь','восемь','девять','десять'];return w[n]||n;}
+function rubles(n){
+  const s=Math.round(n).toString();const last2=parseInt(s.slice(-2));const last1=parseInt(s.slice(-1));
+  let w;if(last2>=11&&last2<=19)w='рублей';else if(last1===1)w='рубль';else if(last1>=2&&last1<=4)w='рубля';else w='рублей';
+  return n.toLocaleString('ru-RU')+' '+w;
+}
+function copyAct(){
+  const t=document.getElementById('act-text').textContent;
+  navigator.clipboard.writeText(t).then(()=>alert('✅ Акт скопирован в буфер обмена'));
+}
+
+// ─── EVENTS ───
+function evf(f,el){evfc=f;document.querySelectorAll('#view-events .fc').forEach(c=>c.classList.remove('on'));if(el)el.classList.add('on');rEvents();}
+function rEvents(){
+  let fl=events;
+  if(evfc!=='all')fl=events.filter(e=>e.status===evfc);
+  const el=document.getElementById('ev-list');
+  if(!fl.length){el.innerHTML=`<div class="empty">Мероприятий нет</div>`;return;}
+  el.innerHTML=fl.map(ev=>`<div class="ev-item ${ev.status}">
+    <div class="ev-top">
+      <div>
+        <div class="ev-nm">${ev.nm}</div>
+        <div class="ev-date">📅 ${ev.quarter}${ev.date?' · '+fmt(ev.date):''}</div>
+      </div>
+      <span class="ev-status ${ev.status}">${{planning:'📋 Планируется',ready:'✅ Готово',done:'✓ Проведено',urgent:'🔥 Срочно'}[ev.status]}</span>
+    </div>
+    <div class="ev-meta">
+      ${ev.budget?`<span>💰 ${ev.budget}</span>`:''}
+      <span>👤 ${ev.resp}</span>
+    </div>
+    ${ev.desc?`<div style="font-size:11px;color:var(--on-sur-v);margin-bottom:6px;line-height:1.5">${ev.desc}</div>`:''}
+    <div class="ev-checklist">${ev.checks.map((c,i)=>`
+      <label class="ev-check ${c.d?'checked':''}" onclick="toggleCheck('${ev.id}',${i})">
+        <input type="checkbox" ${c.d?'checked':''} onclick="event.stopPropagation();toggleCheck('${ev.id}',${i})">
+        <span>${c.t}</span>
+      </label>`).join('')}
+    </div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-ton btn-sm" onclick="setEvStatus('${ev.id}','${ev.status==='done'?'planning':'done'}')">${ev.status==='done'?'↩ Вернуть':'✓ Провести'}</button>
+      ${ev.status!=='ready'?`<button class="btn btn-ton btn-sm" onclick="setEvStatus('${ev.id}','ready')">✅ Готово</button>`:''}
+    </div>
+  </div>`).join('');
+}
+
+function toggleCheck(evId,idx){
+  const ev=events.find(e=>e.id===evId);if(!ev)return;
+  ev.checks[idx].d=!ev.checks[idx].d;
+  S('aic4_events',events);rEvents();
+}
+function setEvStatus(evId,status){
+  const ev=events.find(e=>e.id===evId);if(!ev)return;
+  ev.status=status;S('aic4_events',events);rEvents();
+}
+
+// ─── MEMBERS ───
+function rMembers(){
+  const total=219,maxCnt=Math.max(...SECTIONS.map(s=>s.cnt));
+  document.getElementById('sections-grid').innerHTML=SECTIONS.map(s=>`
+    <div class="section-card">
+      <div class="section-ico">${s.ico}</div>
+      <div class="section-nm">${s.nm}</div>
+      <div class="section-cnt">${s.cnt}</div>
+      <div style="font-size:10px;color:var(--on-sur-v);margin-top:2px">${Math.round(s.cnt/total*100)}% от общего</div>
+      <div class="section-bar"><div class="section-fill" style="width:${Math.round(s.cnt/maxCnt*100)}%"></div></div>
+    </div>`).join('');
+}
+
+// ─── SMM ───
+function rSMM(){
+  const wk=wn();document.getElementById('wn').textContent=wk;document.getElementById('wth').textContent=WTHEMES[wk%4||4];
+  const days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const n=new Date(),dow=(n.getDay()||7)-1,ws=new Date(n);ws.setDate(n.getDate()-dow);
+  document.getElementById('wg').innerHTML=days.map((d,i)=>{const dt=new Date(ws);dt.setDate(ws.getDate()+i);const ds=dt.toISOString().slice(0,10);
+    return`<div class="wd ${ds===tod()?'today':''} ${posts.some(p=>p.date===ds)?'hp':''}"><div class="wdn">${d}</div><div class="wdd">${dt.getDate()}</div><div class="wdot"></div></div>`;}).join('');
+  const el=document.getElementById('plist');
+  if(!posts.length){el.innerHTML=`<div class="empty">Постов нет. SMM-агент подготовит в среду.</div>`;return;}
+  el.innerHTML=posts.map(p=>`<div class="pc">
+    <div class="ptop">${TOPICS[p.topic]||p.topic}</div>
+    <div class="ptitle">${p.title}</div>
+    ${p.text?`<div class="pprev">${p.text.slice(0,200)}${p.text.length>200?'…':''}</div>`:''}
+    <div class="pft"><span class="tag">📅 ${fmt(p.date)}</span>
+      <button class="ibtn" onclick="cpP('${p.id}')">📋</button>
+      <button class="ibtn" onclick="delP('${p.id}')">✕</button>
+    </div></div>`).join('');
+}
+function savePost(){const h=document.getElementById('ph').value.trim();if(!h){alert('Введите заголовок');return;}posts.unshift({id:uid(),topic:document.getElementById('pt').value,date:document.getElementById('pd').value,title:h,text:document.getElementById('pb').value.trim()});S('aic4_posts',posts);closeM('mp');rSMM();['ph','pb'].forEach(x=>document.getElementById(x).value='');}
+function delP(id){posts=posts.filter(p=>p.id!==id);S('aic4_posts',posts);rSMM();}
+function cpP(id){const p=posts.find(p=>p.id===id);if(p)navigator.clipboard.writeText(`${p.title}\n\n${p.text}`);}
 
 // ─── MEMORY ───
-function loadMem(){['context','projects','decisions'].forEach(k=>document.getElementById('mem-'+k).value=mem[k]||'');}
-function saveMem(k){mem[k]=document.getElementById('mem-'+k).value;S('aic2_mem',mem);addLog('🧠',`Память: ${k} обновлена`);}
-
-// ─── LOG ───
-function renderLog(){
-  const el=document.getElementById('log-list');
-  if(!lg.length){el.innerHTML=`<div style="color:var(--md-on-surface-variant);font-size:13px;padding:10px 0">Журнал пуст</div>`;return;}
-  el.innerHTML=lg.slice(0,60).map(e=>`<div class="log-row"><span class="log-t">${e.t}</span><span>${e.ico}</span><span>${e.txt}</span></div>`).join('');
-}
+function lMem(){['context','projects','decisions'].forEach(k=>document.getElementById('mem-'+k).value=mem[k]||'');}
+function smem(k){mem[k]=document.getElementById('mem-'+k).value;S('aic4_mem',mem);}
 
 // ─── METRICS ───
 function metrics(){
-  document.getElementById('m-tasks').textContent=tasks.filter(t=>t.st!=='done').length;
+  document.getElementById('m-t').textContent=tasks.filter(t=>t.st!=='done').length;
   const s7=new Date();s7.setDate(s7.getDate()+7);const s7s=s7.toISOString().slice(0,10);
-  const pc=cons.filter(c=>{const np=nextPay(c);return np&&np<=s7s&&np>=tod()}).length;
-  document.getElementById('m-pay').textContent=pc;
-  const pn=tasks.filter(t=>t.st!=='done').length;
-  const bt=document.getElementById('badge-t');bt.textContent=pn;bt.style.display=pn?'flex':'none';
+  document.getElementById('m-p').textContent=cons.filter(c=>{const np=nxtPay(c);return np&&np<=s7s&&np>=tod()}).length;
+  const expiredCons=cons.filter(c=>c.st==='expired');
+  const da=document.getElementById('dash-alerts');
+  let alerts=expiredCons.map(c=>`<div class="alert"><span class="alert-ico">⚠️</span><div><strong>Истёкший договор:</strong> ${c.nm} (${c.sport}) — ${c.note||'нужен новый договор'}</div></div>`);
+  const urgentEv=events.filter(e=>e.status!=='done'&&e.date&&e.date<new Date(Date.now()+14*864e5).toISOString().slice(0,10));
+  if(urgentEv.length)alerts.push(`<div class="alert alert-ok"><span class="alert-ico">📅</span><div><strong>Ближайшие мероприятия:</strong> ${urgentEv.map(e=>e.nm+' ('+fmt(e.date)+')').join(', ')}</div></div>`);
+  da.innerHTML=alerts.join('');
 }
 
 // ─── INIT ───
-loadMem();renderAgents();renderTasks();renderUrgent();renderLog();metrics();
-addLog('🚀','Командный центр запущен');
+initData();loadAll();
+rSide();rAgGrid();rTasks();rUrgent();lMem();metrics();
+rFinanceTrainers();rPays();
+selAgent('dispatch');
 </script>
 </body>
 </html>
